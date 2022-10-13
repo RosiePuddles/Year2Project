@@ -1,5 +1,5 @@
-##Post Meeting Notes: Entry 1
-#Things Achieved and Learned and ideas:
+# Post Meeting Notes: Entry 1
+## Things Achieved and Learned and ideas:
 * Set up github repo and shared with group. Will be used for all files related to the project and group work which we need for the report
 * Reviewed what we need to do this term and the marking criteria
 * Sent a email to our end user, alexandra.i.cristea@durham.ac.uk
@@ -16,7 +16,7 @@
   5. Optimising the environment based on data, to make the user most relaxed/aid their meditation
       
 
-#Things to Do:
+## Things to Do:
 * Prepare for meeting with Alexandra: have a list of questions to ask and an outline of what we want to build
 * Experiment around with Unity 
 * Review other papers for ideas about our project
