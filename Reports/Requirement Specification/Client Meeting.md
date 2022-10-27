@@ -5,7 +5,7 @@
 * the VR meditation should be personalized, meaning it adapts to data readings from sensors. Customization is a nice touch, but not the main focus of this project
 * Sensors: heart rate monitor, EEG?, eye tracking. We also have £100 to spend on sensors.
 * adapt to users experience level: beginner, advanced, master etc.
-* Its should be actual VR, not justa screen
+* Its should be actual VR, not just a screen
 ## Suggestions
 * implement gamification?
 * add non-live feedback?
