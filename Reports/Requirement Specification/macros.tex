@@ -1,0 +1,52 @@
+\newcommand{\musthave}{{\color{red}Must have}}
+\newcommand{\shouldhave}{{\color{orange}Should have}}
+\newcommand{\couldhave}{{\color{Green}Could have}}
+
+\newcommand{\FunctionalReq}[7]{
+\begin{tabularx}{\textwidth}{|L{0.55}|R{1.45}|}
+	\hline
+	\textbf{ID - Name} & \textbf{\makecell*{#1 #2}} \\\specialrule{.12em}{.05em}{.05em}
+	\textbf{Description} & \makecell*{#3} \\\hline
+	\textbf{\makecell*{{\color{red}Mu\color{orange}Sh\color{Green}Co} - Priority}} & \makecell*{#4} \\\hline
+	\textbf{Dependencies} & \makecell*{#5} \\\hline
+	\textbf{Expected Results} & \makecell*{#6} \\\hline
+	\textbf{Exception handling} & \makecell*{#7} \\\hline
+\end{tabularx}
+
+}
+\newcommand{\NonFunctionalReq}[7]{
+\begin{tabularx}{\textwidth}{|L{0.55}|R{1.45}|}
+	\hline
+	\textbf{ID - Name} & \textbf{\makecell*{#1 #2}} \\\specialrule{.12em}{.05em}{.05em}
+	\textbf{Description} & \makecell*{#3} \\\hline
+	\textbf{Dependencies} & \makecell*{#4} \\\hline
+	\textbf{Priority} & \makecell*{#5} \\\hline
+	\textbf{Metrics} & \makecell*{#6} \\\hline
+	\textbf{Constraints} & \makecell*{#7} \\\hline
+\end{tabularx}
+
+}
+\newcommand{\NonFunctionalReqS}[8]{
+\begin{tabularx}{\textwidth}{|L{0.55}|R{1.45}|}
+	\hline
+	\textbf{ID - Name} & \textbf{\makecell*{#1 #2}} \\\specialrule{.12em}{.05em}{.05em}
+	\textbf{Description} & \makecell*{#3} \\\hline
+	\textbf{Dependencies} & \makecell*{#4} \\\hline
+	\textbf{Priority} & \makecell*{#5} \\\hline
+	\textbf{Metrics} & \makecell*{#6} \\\hline
+	\textbf{Constraints} & \makecell*{#7} \\\hline
+	\textbf{Security} & \makecell*{#8} \\\hline
+\end{tabularx}
+
+}
+\newcommand{\RiskMatrix}[9]{
+\begin{tabularx}{\textwidth}{C{0.15}C{0.65}|L{1.4}|L{1.4}|L{1.4}|}
+	\cline{3-5}
+	& & \multicolumn{3}{c|}{\textbf{Impact}} \\\cline{3-5}
+	& & \makecell*{Low} & \makecell*{Medium} & \makecell*{High}\\\hline
+	\multicolumn{1}{|c}{\multirow{5}{*}{\rotatebox[origin=c]{90}{\textbf{Proabability}}}} & \multicolumn{1}{|l|}{Unlikely} & \cellcolor{Green}\makecell*{#1} & \cellcolor{LimeGreen}\makecell*{#2} & \cellcolor{YellowOrange}\makecell*{#3} \\\cline{2-5}
+	\multicolumn{1}{|c}{} & \multicolumn{1}{|l|}{Possible} & \cellcolor{LimeGreen}\makecell*{#4} & \cellcolor{YellowOrange}\makecell*{#5} & \cellcolor{RedOrange}\makecell*{#6} \\\cline{2-5}
+	\multicolumn{1}{|c}{} & \multicolumn{1}{|l|}{Likely} & \cellcolor{YellowOrange}\makecell*{#7} & \cellcolor{RedOrange}\makecell*{#8} & \cellcolor{Red}\makecell*{#9} \\\hline
+\end{tabularx}
+
+}
