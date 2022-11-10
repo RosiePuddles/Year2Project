@@ -70,7 +70,7 @@ The data metrics will be constructed to account for global limits and will be pe
 
 Each user will have an associated account that will communicate with the server. This account will contain the user's name and personalisation data. The user will be able to access a history of sessions via a request to the server.
 
-the server itself will be run by a $<$code$>$ script that can be run on any computer. For the purpose of product demonstration, we will ensure the same computer runs both the server and Quest app in lieu of a server with a static IP. The server will store user account data, raw session data, and session metric results. Data will be stored in accordance with the GDPR.
+The server itself will be run by a Python script that can be run on any computer. For the purpose of product demonstration, we will ensure the same computer runs both the server and Quest app in lieu of a server with a static IP. The server will store user account data, raw session data, and session metric results. Data will be stored in accordance with the GDPR.
 
 \subsubsection{Current systems}
 
@@ -169,7 +169,7 @@ The following Gantt Chart illustrates our timeline for the duration of this proj
 
 \centering
 \begin{ganttchart}[
-	x unit=0.1cm,
+	x unit=0.09cm,
 	y unit chart=0.5cm,
 	hgrid={black!25},
 	link bulge=3,
@@ -203,8 +203,8 @@ The following Gantt Chart illustrates our timeline for the duration of this proj
     \ganttlink{design_video}{test_plan_rep}
     \ganttlink{test_plan_rep}{user_manual}
     \ganttlink{test_plan_rep}{product_pres}
-	    \ganttvrule{Coding begins}{2022-11-10}
-	    \ganttvrule[vrule/.append style={red, ultra thick} ]{Product Handover}{2023-04-27}
+    \ganttvrule{Coding begins}{2022-11-10}
+    \ganttvrule[vrule/.append style={red, ultra thick},vrule label node/.append style={anchor=north east}]{Product Handover}{2023-04-27}
 \end{ganttchart}
 \end{landscape}
 
