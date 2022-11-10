@@ -160,11 +160,12 @@ This research showed that the multimodal feedback correlated with a decrease in 
 \subsection{Development Approach}
 \label{ssec:dev_approach}
 
-\begin{landscape}
 \subsection{Project Schedule}
 \label{ssec:schedule}
 
+The following Gantt Chart illustrates our timeline for the duration of this project. Since the code itself is going to be modular, we have opted for a similar approach of dividing the work for the assessments in to subsections of individual work. This allows us to increase the scope of the project. Furthermore,    
 
+\begin{landscape}
 
 \centering
 \begin{ganttchart}[
@@ -172,15 +173,38 @@ This research showed that the multimodal feedback correlated with a decrease in 
 	y unit chart=0.5cm,
 	hgrid={black!25},
 	link bulge=3,
-	time slot format=isodate
-]{2022-10-08}{2023-4-29}
+	time slot format=isodate,
+	vrule/.style={very thick, blue}
+]{2022-10-08}{2023-04-29}
 	\gantttitlecalendar{year, month=name}\\
-
-    \ganttbar[name=req_spec]{Requirement Specification}{2022-10-21}{2022-11-10}\\
-    \ganttbar[name=design_video]{Design Video Presentation}{2022-11-08}{2022-12-08}
+    \ganttgroup{Primary Development}{2022-11-10}{2023-01-20} \\
+    \ganttbar[name=req_spec_pre, bar/.append style={fill=red}]{Requirement Specification Discussion}{2022-10-17}{2022-10-21}\\
+    \ganttbar[name=req_spec, bar/.append style={fill=red}]{Requirement Specification}{2022-10-21}{2022-11-10}\\
+    \ganttbar[name=req_spec_rev, bar/.append style={fill=red}]{Requirement Specification Revision}{2022-11-11}{2022-11-15}\\
+    \ganttbar[name=design_video_pre, bar/.append style={fill=green}]{Design Video Presentation Allocation}{2022-11-04}{2022-11-08}\\
+    \ganttbar[name=design_video, bar/.append style={fill=green}]{Design Video Presentation}{2022-11-08}{2022-12-01}\\
+    \ganttbar[name=design_video_rev, bar/.append style={fill=green}  
+    ]{Design Video Presentation Revision}{2022-12-02}{2022-12-06}\\
+    \ganttgroup{Feedback Collection}{2023-01-21}{2023-02-08} \\
+    \ganttbar[name=test_plan_rep_pre,bar/.append style={fill=yellow}]{Test Plan Report Allocation}{2022-11-24}{2022-11-28}\\
+    \ganttbar[name=test_plan_rep,bar/.append style={fill=yellow}]{Test Plan Report}{2022-11-28}{2023-01-26}\\
+    \ganttbar[name=test_plan_rep_rev, bar/.append style={fill=yellow}]{Test Plan Report Revision}{2023-01-27}{2023-01-30}\\
+    \ganttgroup{Code Adjustment}{2023-02-08}{2023-02-24}\\
+    \ganttbar[name=user_manual_pre, bar/.append style={fill=blue}]{User Manual Allocation}{2023-01-19}{2023-01-23}\\
+    \ganttbar[name=user_manual, bar/.append style={fill=blue}]{User Manual}{2023-01-23}{2023-03-09}\\
+    \ganttbar[name=user_manual_rev, bar/.append style={fill=blue}]{User Manual Revision}{2023-03-09}{2023-03-13}\\
+    \ganttbar[name=product_pres_pre, bar/.append style={fill=orange}]{Product Presentation}{2023-02-11}{2023-02-15}\\
+    \ganttbar[name=product_pres, bar/.append style={fill=orange}]{Product Presentation}{2023-02-15}{2023-03-09}\\
+    \ganttbar[name=product_pres_rev, bar/.append style={fill=orange}]{Product Presentation}{2023-03-10}{2023-03-13}\\
+    
+    \ganttbar[name=reflective_rep]{Reflective Report}{2023-01-30}{2023-04-29}\\
+    
     \ganttlink{req_spec}{design_video}
-	\ganttvrule{PE 1}{2022-11-24}
-	\ganttvrule{PE 2}{2022-12-08}
+    \ganttlink{design_video}{test_plan_rep}
+    \ganttlink{test_plan_rep}{user_manual}
+    \ganttlink{test_plan_rep}{product_pres}
+	    \ganttvrule{Coding begins}{2022-11-10}
+	    \ganttvrule[vrule/.append style={red, ultra thick} ]{Product Handover}{2023-04-27}
 \end{ganttchart}
 \end{landscape}
 
