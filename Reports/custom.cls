@@ -57,3 +57,25 @@
 \listoffigures
 \listoftables
 }
+
+\RequirePackage{listings}
+\lstset{
+    commentstyle=\color{Emerald},
+    keywordstyle=\color{OrangeRed},
+    identifierstyle=\color{blue},
+    numberstyle=\tiny\color{black!50},
+    stringstyle=\color{ForestGreen},
+    basicstyle=\ttfamily\footnotesize,
+    breakatwhitespace=false,
+    breaklines=true,
+    captionpos=b,
+    keepspaces=true,
+    numbersep=5pt,
+    numbers=left,
+    numberstyle=\tiny\color{black},
+    stepnumber=5,
+    showspaces=false,
+    showstringspaces=false
+    showtabs=false,
+    tabsize=2
+}
