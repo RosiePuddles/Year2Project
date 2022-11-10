@@ -1,6 +1,5 @@
-\documentclass[coverpage]{../custom}
+\documentclass[coverpage,lineno]{../custom}
 \usepackage[dvipsnames,table]{xcolor}
-\usepackage{ctable}
 \usepackage{tabularx}
 \usepackage{multicol}
 \usepackage{multirow}
@@ -8,6 +7,8 @@
 \usepackage{lscape}
 \usepackage{pgfgantt}
 \usepackage{tikz}
+\usepackage{ctable}
+\usepackage[style=numeric-comp,alldates=iso]{biblatex}
 \usetikzlibrary{arrows.meta}
 \renewcommand{\cellalign}{lc}
 \newcolumntype{L}[1]{>{\hsize=#1\hsize\raggedright\arraybackslash}X}
@@ -15,50 +16,67 @@
 \newcolumntype{R}[1]{>{\hsize=#1\hsize\raggedleft\arraybackslash}X}
 \definecolor{RedOrange}{RGB}{255,83,0}
 
+\addbibresource{../references.bib}
+
 \include{macros}
 
 \Title{Requirement Specification}
 
 \begin{document}
-\maketitle
 \pagenumbering{gobble}
+\maketitle
 \tableofcontents\newpage
 \pagenumbering{arabic}
+
 
 \section{Introduction}
 \label{sec:intro}
 
-This document provides the requirement specifications for our virtual reality (VR) meditation application, referred henceforth as 'the product'; the specific software for the product shall be referred to as 'the software'. This document provides an introduction (\cref{sec:intro}) to the project, covering the justification (\cref{ssec:just}), scope (\cref{ssec:scope}), and systems (\cref{ssec:desc}); the requirements for the system (\cref{sec:req}), both functional (\cref{ssec:f_req}) and non-functional (\cref{ssec:nf_req}), and potential risks and issues (\cref{ssec:risks}); the development of the project (\cref{sec:dev}) in terms of the approach (\cref{ssec:dev_approach}) and schedule (\cref{ssec:schedule}).
-
 \subsection{Overview and Justification}
 \label{ssec:just}
 
+This document provides the requirement specifications for our virtual reality (VR) meditation application, referred to henceforth as `the product'; the specific software for the product shall be referred to as `the software'. This document provides an introduction (\cref{sec:intro}) to the project, covering the justification (\cref{ssec:just}), scope (\cref{ssec:scope}), and systems (\cref{ssec:desc}); the requirements for the system (\cref{sec:req}), both functional (\cref{ssec:f_req}) and non-functional (\cref{ssec:nf_req}), and potential risks and issues (\cref{ssec:risks}); the development of the project (\cref{sec:dev}) in terms of the approach (\cref{ssec:dev_approach}) and schedule (\cref{ssec:schedule}).
+
 This project is for Professor Alexandra Cristea who shall henceforth be referred to as 'the client'. The client has given us the project of developing a VR meditation application with the possible use as a basis for research into the topic. This project aims to help those who have not done any, or have done very little, meditation before by giving them an immersive VR world to aid concentration and relaxation.
-
-This project has several main aims:
-\begin{itemize}
-	\item Personalisation over customisation\\
-	The client would prefer for the project to personalise itself rather than have the user customise the project
-	\item Stability\\
-	The client would prefer fewer stable features over more less stable features
-	\item Modularity\\
-	The client would prefer the software to be modular to allow for ease of reuse in more projects
-\end{itemize}
-
-\subsubsection{Relevant Literature}
-
-To ensure the product is as intended, we will use relevant literature on the topic to ensure the product can be primarily a meditation app, and secondly usable as a basis for research. The following is a list of the literature referenced and design choices impacted by the literature:
-\begin{itemize}
-	\item 
-\end{itemize}
 
 \subsection{Project Scope}
 \label{ssec:scope}
 
-This project is intended for those who have never done any, or done very little, meditation before. It is aimed primarily at adults. 
+This project is intended for those who have never done any, or done very little, meditation before. It is aimed primarily at adults. The app is intended to help with mindfulness meditation (MM) practice through the use of gamification concepts and VR. The primary objectives are as follows:
+
+\begin{itemize}
+	\item Personalisation over customisation\\
+	The client would prefer for the project to personalise, that is automatic adjustments to suit the user, itself rather than have the user customise the project, that is allowing the user to alter the environment
+	\item Stability\\
+	The client would prefer fewer stable features over more less-stable features
+	\item Modularity\\
+	The client would prefer the software to be modular to allow for ease of reuse in future projects
+\end{itemize}
+
+The client would also like the potential to use the project later on in a research context. This is not a primary consideration of ours, but we will use this to guide our development. To ensure that our project can be as seamlessly used in this context with little impact on the project itself, we will make reference to relevant literature where necessary to ensure our implementations of MM is as concurrent with current literature as we can make it\footnote{The authors can find little research on MM with VR implementations. There is a significant amounts of research into VR applications and MM separately which we will use to guide our development}.
+
+For some examples of literature we will likely make reference of, see \cite{kosunen_relaworld_2016, tang_neuroscience_2015, wang_reducing_2022}. We will also make significant reference to \cite{lan_slow_2021} as a good example of research into a similar topic.
 
 \subsection{System Description}
 \label{ssec:desc}
+
+The system will be a VR app intended for meditation with aspects of gamification\cite{toda_taxonomy_2019} using the Meta Quest\footnote{Previously Oculus Quest}. The app is intended to aid with visualisation based meditation and to accelerate the progression through meditation training.
+
+The primary section of the app will be set in an environment designed to have as little possible distraction as possible whilst still allowing the app to be engaging. At present, we intend for the environment to be relatively featureless, with some objects orbiting the user. The objects will themselves have particles around them to obfuscate any highly contrasting areas. Each session will be approximately 10 to 20 minutes in length and various metrics will be measured throughout such as heart rate, EEG data, and eye tracking. This will be analysed and stored externally in accordance with the GDPR.
+
+Evaluation metrics will be applied to the raw data, the results of which will be used to compare sessions and measure improvement. These metrics will be user-specific and will require user-specific baseline data, as well as general data. To gather this baseline data, a short (at most 5 minutes) baseline session will be required before the user can complete any meditation.
+
+The data metrics will be constructed to account for global limits and will be personalised, via user-specific data, to ensure that any change can be measured relatively to the user and not to some global standard. With this we aim to ensure that all users can see a clear progression from session to session.
+
+Each user will have an associated account that will communicate with the server. This account will contain the user's name and personalisation data. The user will be able to access a history of sessions via a request to the server.
+
+the server itself will be run by a $<$code$>$ script that can be run on any computer. For the purpose of product demonstration, we will ensure the same computer runs both the server and Quest app in lieu of a server with a static IP. The server will store user account data, raw session data, and session metric results. Data will be stored in accordance with the GDPR.
+
+\subsubsection{Current systems}
+
+As previously mentioned, there is little research into MM and VR, so we will instead refer to \cite{lan_slow_2021}. Lan et al. demonstrated a feasible study for multimodal feedback meditation in VR. They used g-tummo meditation which has some well researched benefits \cite{kozhevnikov_neurocognitive_2013} but is a fairly advanced technique. As such the multimodal feedback system allows less experienced meditators to feel a more immediate feedback from meditation and thus attempt to help motivate people to continue meditation.
+
+This research showed that the multimodal feedback correlated with a decrease in breathing rate and helped maintain user attention, measured via tiredness.
 
 \section{Solution Requirements}
 \label{sec:req}
@@ -166,6 +184,6 @@ This project is intended for those who have never done any, or done very little,
 \end{ganttchart}
 \end{landscape}
 
-%\printbibliography
+\printbibliography
 
 \end{document}
