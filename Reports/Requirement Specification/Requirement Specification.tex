@@ -223,7 +223,8 @@ The following Gantt Chart illustrates our timeline for the duration of this proj
     \ganttlink{product_pres_pre}{product_pres}
     \ganttlink{product_pres}{product_pres_rev}
     
-    \ganttbar[name=reflective_rep]{Reflective Report}{2023-01-30}{2023-04-29}\\
+    % reflective rep
+    \ganttbar[name=reflective_rep, bar/.append style={fill=Thistle}]{Reflective Report}{2023-01-30}{2023-04-29}\\
     \ganttvrule[vrule/.append style={red, ultra thick},vrule label node/.append style={anchor=north east}]{Product Handover}{2023-04-27}
 \end{ganttchart}
 \end{landscape}
