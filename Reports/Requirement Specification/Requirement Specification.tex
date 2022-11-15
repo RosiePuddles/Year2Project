@@ -162,12 +162,44 @@ Hølledig et al. \cite{holledig_zenvr_2018} demonstrated a VR based meditation e
 
 \subsection{Development Approach}
 \label{ssec:dev_approach}
+For our Software Engineering Project, we have decided that an agile approach, specifically Extreme Programming (XP), fits our needs the best. It ensures that we can work on multiple tasks simultaneously and stipulates thorough planning and collaboration, which is inline with our concept
+
+\subsubsection{Advantages of Extreme Programming}
+\begin{itemize}
+    \item Extensive planning \\
+    As detailed in our Project Schedule, our approach has to rely significantly on prior planning and communication. Each piece of code / assessment is meticulously divided into smaller sub-tasks and evaluated based on its length and difficulty. Additionally, the group always confers with the client first to make sure the vision of client till matches the production code.
+    \item Pair programming \\
+    Two people from the group focus solely on the actual development of the software / code and cross check each other's work. 
+    \item Simple design \\
+    After meeting whit the client, its has become clear that the data is the primary focus of this project. Personalisation (the collection of data and the subsequent adapting of the meditation) is will be the goal of this project, rather than creating a customizable environment, e.g. prioritizing eye tracking over more colors the user can choose from at the beginning of the meditation. This follows the principle of simple design, since we will focus on raw data collection rather than "bells and whistles".
+    \item Refactoring and continuous integration \\
+     During the primary development phase outlined in \cref{ssec:schedule} we will have to adapt and refactor the code multiple times for adjustment. This could be due to technical limitations and feedback given in the feedback stage in \cref{ssec:schedule}. Since the client has requested the code be as clean and understandable as possible due to the fact that it might be used for further research later, we will periodically refactor and simplify the code. This will happen frequently, since we are not experienced with VR or C-sharp.
+\end{itemize}
+\subsubsection{Disadvantages of other methods}
+\begin{itemize}
+    \item Waterfall \\
+    The Waterfall method does not offer the flexibility we need to manage this project in the given time frame. Implementing new requirements or coding practices is virtually impossible because everything has to stick to a rigid schedule. Dividing the workload would also not work with this method. In contrast, the XP method allows for more dynamic workflows and and reflects a realistic relationship with the client
+    \item SCRUM \\
+    SCRUM has fixed, predefined roles which we feel are not suited for our project. Since we decide everything together and everyone cross checks everyone, there is no need for a SCRUM Master or a product owner. Additionally, the frequency of meetings and the general time spent on a sprint does not coincide with our project schedule. In contrast, XP does not have a predefined time strucutre and does not have hierarchical structures.   
+    
+    
+\end{itemize}
 
 \subsection{Project Schedule}
 \label{ssec:schedule}
 
-The following Gantt Chart illustrates our timeline for the duration of this project. Since the code itself is going to be modular, we have opted for a similar approach of dividing the work for the assessments in to subsections of individual work. This allows us to increase the scope of the project. Furthermore,    
-
+The following Gantt Chart illustrates our timeline for the duration of this project. The Gantt Chart is split into two parts: The actual developing stages of the software/code and the completion of the assessments themselves. 
+\subsubsection{Code}
+For the software we the phases have familiarization with the VR-Headsets and C-sharp, the development of the code, feedback from users, testers and the client and minor adjustments in accordance with the provided feedback. Two people will always be working on solely writing the code. 
+\subsubsection{Assements}
+Since we have opted for a modular code and work approach, each piece of work we submit is extensively planned and reviewed:
+\begin{itemize}
+    \item during the 3-5 days before we start on the assessment we divided up the work and discuss key targets 
+    \item over the next few weeks each person completes their part of the project, while continuously communicating to other members of the group their progress and if they need advice
+    \item when everyone has completed their work, one person reviews every section to help ensure proper spelling, formatting and that every section meets / exceeds expectations \\ 
+    \item the revision period does not necessarily only mean revising the actual material. It also means reflecting on the work submitted and figuring out how to improve our collaboration process
+    
+\end{itemize}
 \newgeometry{a4paper,total={155mm,265mm}}
 \begin{landscape}
 \centering
@@ -180,49 +212,49 @@ The following Gantt Chart illustrates our timeline for the duration of this proj
 	vrule/.style={very thick, blue}
 ]{2022-10-08}{2023-04-29}
 	\gantttitlecalendar{year, month=name}\\
-	\gantttitle{}{33}\gantttitle{Primary Development}{72}\gantttitle{Feedback}{20}\gantttitle{Adjustment}{19}\gantttitle{Presentation and Review}{60}\\
+	\gantttitle{Familiarization}{33}\gantttitle{Primary Development}{72}\gantttitle{Feedback}{20}\gantttitle{Adjustment}{19}\gantttitle{Presentation and Review}{60}\\
 
     % req spec
     \ganttgroup[group/.append style={draw=black, fill=red!90!black}]{Requirement Specification}{2022-10-17}{2022-11-15}\\
-    \ganttbar[name=req_spec_pre, bar/.append style={fill=red}]{Requirement Specification Discussion}{2022-10-17}{2022-10-21}\\
+    \ganttbar[name=req_spec_pre, bar/.append style={fill=red}]{Initial Deliberation}{2022-10-17}{2022-10-21}\\
     \ganttbar[name=req_spec, bar/.append style={fill=red}]{Requirement Specification}{2022-10-21}{2022-11-10}\\
-    \ganttbar[name=req_spec_rev, bar/.append style={fill=red}]{Requirement Specification Revision}{2022-11-11}{2022-11-15}\\
+    \ganttbar[name=req_spec_rev, bar/.append style={fill=red}]{Revision}{2022-11-11}{2022-11-15}\\
     \ganttlink{req_spec_pre}{req_spec}
     \ganttlink{req_spec}{req_spec_rev}
     
     % design video pres.
     \ganttgroup[group/.append style={draw=black, fill=green!90!black}]{Design Video Presentation}{2022-11-04}{2022-12-06}\\
-    \ganttbar[name=design_video_pre, bar/.append style={fill=green}]{Design Video Presentation Allocation}{2022-11-04}{2022-11-08}\\
+    \ganttbar[name=design_video_pre, bar/.append style={fill=green}]{Initial Deliberation}{2022-11-04}{2022-11-08}\\
     \ganttbar[name=design_video, bar/.append style={fill=green}]{Design Video Presentation}{2022-11-08}{2022-12-01}\\
     \ganttbar[name=design_video_rev, bar/.append style={fill=green}  
-    ]{Design Video Presentation Revision}{2022-12-02}{2022-12-06}\\
+    ]{Revision}{2022-12-02}{2022-12-06}\\
 	\ganttlink[link type=dr]{req_spec}{design_video_pre}
     \ganttlink{design_video_pre}{design_video}
     \ganttlink{design_video}{design_video_rev}
     
     % test plan report
     \ganttgroup[group/.append style={draw=black, fill=yellow!90!black}]{Test Plan Report}{2022-11-24}{2023-01-30} \\
-    \ganttbar[name=test_plan_rep_pre,bar/.append style={fill=yellow}]{Test Plan Report Allocation}{2022-11-24}{2022-11-28}\\
+    \ganttbar[name=test_plan_rep_pre,bar/.append style={fill=yellow}]{Initial Deliberation}{2022-11-24}{2022-11-28}\\
     \ganttbar[name=test_plan_rep,bar/.append style={fill=yellow}]{Test Plan Report}{2022-11-28}{2023-01-26}\\
-    \ganttbar[name=test_plan_rep_rev, bar/.append style={fill=yellow}]{Test Plan Report Revision}{2023-01-27}{2023-01-30}\\
+    \ganttbar[name=test_plan_rep_rev, bar/.append style={fill=yellow}]{Revision}{2023-01-27}{2023-01-30}\\
 	\ganttlink[link type=dr]{design_video}{test_plan_rep_pre}
     \ganttlink{test_plan_rep_pre}{test_plan_rep}
     \ganttlink{test_plan_rep}{test_plan_rep_rev}
     
     % user manual
     \ganttgroup[group/.append style={draw=black, fill=blue!90!black}]{User Manual}{2023-01-19}{2023-03-13}\\
-    \ganttbar[name=user_manual_pre, bar/.append style={fill=blue}]{User Manual Allocation}{2023-01-19}{2023-01-23}\\
+    \ganttbar[name=user_manual_pre, bar/.append style={fill=blue}]{Initial Deliberation}{2023-01-19}{2023-01-23}\\
     \ganttbar[name=user_manual, bar/.append style={fill=blue}]{User Manual}{2023-01-23}{2023-03-09}\\
-    \ganttbar[name=user_manual_rev, bar/.append style={fill=blue}]{User Manual Revision}{2023-03-09}{2023-03-13}\\
+    \ganttbar[name=user_manual_rev, bar/.append style={fill=blue}]{Revision}{2023-03-09}{2023-03-13}\\
 	\ganttlink[link type=dr]{design_video}{user_manual_pre}
     \ganttlink{user_manual_pre}{user_manual}
     \ganttlink{user_manual}{user_manual_rev}
     
     % product pres.
     \ganttgroup[group/.append style={draw=black, fill=orange!90!black}]{Product Presentation}{2023-02-11}{2023-03-13}\\
-    \ganttbar[name=product_pres_pre, bar/.append style={fill=orange}]{Product Presentation}{2023-02-11}{2023-02-15}\\
+    \ganttbar[name=product_pres_pre, bar/.append style={fill=orange}]{Initial Deliberation}{2023-02-11}{2023-02-15}\\
     \ganttbar[name=product_pres, bar/.append style={fill=orange}]{Product Presentation}{2023-02-15}{2023-03-09}\\
-    \ganttbar[name=product_pres_rev, bar/.append style={fill=orange}]{Product Presentation}{2023-03-10}{2023-03-13}\\
+    \ganttbar[name=product_pres_rev, bar/.append style={fill=orange}]{Revision}{2023-03-10}{2023-03-13}\\
     \ganttlink{product_pres_pre}{product_pres}
     \ganttlink{product_pres}{product_pres_rev}
     
@@ -290,3 +322,5 @@ Note that for the child nodes of \texttt{HR\_data} and \texttt{EEG\_data} in the
 \printbibliography
 
 \end{document}
+
+
