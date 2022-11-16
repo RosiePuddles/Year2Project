@@ -188,20 +188,21 @@ For our Software Engineering Project, we have decided that an agile approach, sp
 \subsection{Project Schedule}
 \label{ssec:schedule}
 
-The following Gantt Chart illustrates our timeline for the duration of this project. The Gantt Chart is split into two parts: The actual developing stages of the software/code and the completion of the assessments themselves. 
+\Cref{fig:schedule} illustrates our timeline for the duration of this project. The Gantt chart is split into two parts: The actual developing stages of the software/code and the completion of the assessments themselves. 
 \subsubsection{Code}
-For the software we the phases have familiarization with the VR-Headsets and C-sharp, the development of the code, feedback from users, testers and the client and minor adjustments in accordance with the provided feedback. Two people will always be working on solely writing the code. 
-\subsubsection{Assements}
+For the software we the phases have familiarisation with the VR-Headsets and C-sharp, the development of the code, feedback from users, testers and the client and minor adjustments in accordance with the provided feedback. Two people will always be working on solely writing the code. 
+\subsubsection{Assessments}
 Since we have opted for a modular code and work approach, each piece of work we submit is extensively planned and reviewed:
 \begin{itemize}
-    \item during the 3-5 days before we start on the assessment we divided up the work and discuss key targets 
-    \item over the next few weeks each person completes their part of the project, while continuously communicating to other members of the group their progress and if they need advice
-    \item when everyone has completed their work, one person reviews every section to help ensure proper spelling, formatting and that every section meets / exceeds expectations \\ 
-    \item the revision period does not necessarily only mean revising the actual material. It also means reflecting on the work submitted and figuring out how to improve our collaboration process
-    
+    \item During the 3-5 days before we start on the assessment we divided up the work and discuss key targets
+    \item Over the next few weeks each person completes their part of the project, while continuously communicating to other members of the group their progress and if they need advice
+    \item When everyone has completed their work, one person reviews every section to help ensure proper spelling, formatting and that every section meets / exceeds expectations
+    \item The revision period does not necessarily only mean revising the actual material. It also means reflecting on the work submitted and figuring out how to improve our collaboration process
 \end{itemize}
+
 \newgeometry{a4paper,total={155mm,265mm}}
 \begin{landscape}
+\begin{figure}
 \centering
 \begin{ganttchart}[
 	x unit=0.1cm,
@@ -212,7 +213,7 @@ Since we have opted for a modular code and work approach, each piece of work we 
 	vrule/.style={very thick, blue}
 ]{2022-10-08}{2023-04-29}
 	\gantttitlecalendar{year, month=name}\\
-	\gantttitle{Familiarization}{33}\gantttitle{Primary Development}{72}\gantttitle{Feedback}{20}\gantttitle{Adjustment}{19}\gantttitle{Presentation and Review}{60}\\
+	\gantttitle{Familiarization}{33}\gantttitle{Primary Development}{72}\gantttitle{Feedback}{20}\gantttitle{Adjustment}{19}\gantttitle{Presentation and Review}{60}
 
     % req spec
     \ganttgroup[group/.append style={draw=black, fill=red!90!black}]{Requirement Specification}{2022-10-17}{2022-11-15}\\
@@ -262,6 +263,9 @@ Since we have opted for a modular code and work approach, each piece of work we 
     \ganttbar[name=reflective_rep, bar/.append style={fill=Thistle}]{Reflective Report}{2023-01-30}{2023-04-29}
     \ganttvrule[vrule/.append style={red, ultra thick},vrule label node/.append style={anchor=north east}]{Product Handover}{2023-04-27}
 \end{ganttchart}
+\caption{Project Schedule Gantt Chart}
+\label{fig:schedule}
+\end{figure}
 \end{landscape}
 \restoregeometry
 
