@@ -3,6 +3,7 @@
 \newcommand{\couldhave}{{\color{Green}Could have}}
 \usepackage{longtable}
 \usepackage{boldline}
+\usepackage{everypage}
 
 \newcommand{\FunctionalReq}[8]{
 \begin{center}
@@ -56,3 +57,14 @@
 \end{tabularx}
 
 }
+
+\newcommand{\Lpagenumber}{\ifdim\textwidth=\linewidth\else\bgroup
+  \dimendef\margin=0 %use \margin instead of \dimen0
+  \ifodd\value{page}\margin=\oddsidemargin
+  \else\margin=\evensidemargin
+  \fi
+  \raisebox{\dimexpr -\topmargin-\headheight-\headsep-0.5\linewidth}[0pt][0pt]{%
+    \rlap{\hspace{\dimexpr \margin+\textheight+\footskip}%
+    \llap{\rotatebox{90}{\thepage}}}}%
+\egroup\fi}
+\AddEverypageHook{\Lpagenumber}%

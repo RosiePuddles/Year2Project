@@ -9,7 +9,7 @@
 \usepackage{tikz}
 \usepackage{ctable}
 \usepackage{listings}
-\usepackage[style=numeric-comp,alldates=iso]{biblatex}
+\usepackage[style=numeric-comp,alldates=iso,sorting=none]{biblatex}
 \usetikzlibrary{arrows.meta}
 \renewcommand{\cellalign}{lc}
 \newcolumntype{L}[1]{>{\hsize=#1\hsize\raggedright\arraybackslash}X}
@@ -38,7 +38,7 @@
 
 This document provides the requirement specifications for our virtual reality (VR) meditation application, referred to henceforth as `the product'; the specific software for the product shall be referred to as `the software'. This document provides an introduction (\cref{sec:intro}) to the project, covering the justification (\cref{ssec:just}), scope (\cref{ssec:scope}), and systems (\cref{ssec:desc}); the requirements for the system (\cref{sec:req}), both functional (\cref{ssec:f_req}) and non-functional (\cref{ssec:nf_req}), and potential risks and issues (\cref{ssec:risks}); the development of the project (\cref{sec:dev}) in terms of the approach (\cref{ssec:dev_approach}) and schedule (\cref{ssec:schedule}).
 
-This project is for Professor Alexandra Cristea who shall henceforth be referred to as 'the client'. The client has given us the project of developing a VR meditation application with the possible use as a basis for research into the topic. This project aims to help those who have not done any, or have done very little, meditation before by giving them an immersive VR world to aid concentration and relaxation.
+This project is for Professor Alexandra Cristea who shall henceforth be referred to as 'the client'. The client has given us the project of developing a VR meditation application with the possible use as the software basis for research into the topic.
 
 \subsection{Project Scope}
 \label{ssec:scope}
@@ -47,11 +47,11 @@ This project is intended for those who have never done any, or done very little,
 
 \begin{itemize}
 	\item Personalisation over customisation\\
-	The client would prefer for the project to personalise, that is automatic adjustments to suit the user, itself rather than have the user customise the project, that is allowing the user to alter the environment
+	The client would prefer for the project to personalise, that is automatic adjustments\footnote{Due to the early stage of the project, adjustments here is used in a broad sense in relation to general environmental changes such as colours. This choice was partly inspired by the research aspect of the project.} to suit the user, itself rather than have the user customise the project, that is allowing the user to alter the environment
 	\item Stability\\
 	The client would prefer fewer stable features over more less-stable features
 	\item Modularity\\
-	The client would prefer the software to be modular to allow for ease of reuse in future projects
+	The client would prefer the software to be modular\footnote{Modular here refers to the practice of ensuring code is written in such a way that sections can be reused in different projects with minimal overhead or time required for implementation} to allow for ease of reuse in future projects
 \end{itemize}
 
 The client would also like the potential to use the project later on in a research context. This is not a primary consideration of ours, but we will use this to guide our development. To ensure that our project can be as seamlessly used in this context with little impact on the project itself, we will make reference to relevant literature where necessary to ensure our implementations of MM is as concurrent with current literature as we can make it\footnote{The authors can find little research on MM with VR implementations. There is a significant amounts of research into VR applications and MM separately which we will use to guide our development}.
@@ -71,7 +71,7 @@ The data metrics will be constructed to account for global limits and will be pe
 
 Each user will have an associated account that will communicate with the server. This account will contain the user's name and personalisation data. The user will be able to access a history of sessions via a request to the server.
 
-The server itself will be run by a Python script that can be run on any computer. For the purpose of product demonstration, we will ensure the same computer runs both the server and Quest app in lieu of a server with a static IP. The server will store user account data, raw session data, and session metric results. Data will be stored in a XML format, with each user having a folder under their username, with sessions and user data within that folder. Current, incomplete, XML DTD are given in \cref{apdx:xml_dtd}.
+The server itself will be run by a Python script that can be run on any computer. For the purpose of product demonstration, we will ensure the same computer runs both the server and Quest app in lieu of a server with a static IP. The server will store user account data, raw session data, and session metric results. Data will be stored in a XML format, with each user having a folder under their username, with sessions and user data within that folder. XML has been chosen for data storage due to it's wide use and simplicity. XML also allows for data type definitions for which current incomplete DTD are given in \cref{apdx:xml_dtd}. this wide and simple use ensures a large number of available tools to work with XML and is scalable beyond the expected required number of users thus causing little to no scalability issues.
 
 \subsubsection{Current systems}
 
@@ -80,6 +80,8 @@ There exists several current systems for integrating VR into meditation. We will
 Lan et al. \cite{lan_slow_2021} demonstrated a feasible study for multimodal feedback meditation in VR. They used g-tummo meditation which has some well researched benefits \cite{kozhevnikov_neurocognitive_2013} but is a fairly advanced technique. As such the multimodal feedback system allows less experienced meditators to feel a more immediate feedback from meditation and thus attempt to help motivate people to continue meditation. This research showed that the multimodal feedback correlated with a decrease in breathing rate and helped maintain user attention, measured via tiredness.
 
 Hølledig et al. \cite{holledig_zenvr_2018} demonstrated a VR based meditation environment also using biofeedback. Their environment was a generated forest environment with different amounts of fog depending on real-time evaluation of the user's meditative state. Whilst they failed to show any meaningful benefits, they do note that the use of biofeedback has potential to be useful. The authors also note of significant issue with the Myndplay headband that resulted in having to redesign their tests.
+
+For completeness, we note that this is a novel project with the client not currently using any similar system for purposes similar to the purposes of our application.
 
 \newpage
 \section{Solution Requirements}
@@ -315,6 +317,7 @@ Since we have opted for a modular code and work approach, each piece of work we 
 
 \newgeometry{a4paper,total={155mm,265mm}}
 \begin{landscape}
+\pagestyle{empty}
 \begin{figure}
 \centering
 \begin{ganttchart}[
@@ -326,7 +329,7 @@ Since we have opted for a modular code and work approach, each piece of work we 
 	vrule/.style={very thick, blue}
 ]{2022-10-08}{2023-04-29}
 	\gantttitlecalendar{year, month=name}\\
-	\gantttitle{Familiarization}{33}\gantttitle{Primary Development}{72}\gantttitle{Feedback}{20}\gantttitle{Adjustment}{19}\gantttitle{Presentation and Review}{60}
+	\gantttitle{Familiarization}{33}\gantttitle{Primary Development}{72}\gantttitle{Feedback}{20}\gantttitle{Adjustment}{19}\gantttitle{Presentation and Review}{60}\\
 
     % req spec
     \ganttgroup[group/.append style={draw=black, fill=red!90!black}]{Requirement Specification}{2022-10-17}{2022-11-15}\\
@@ -380,6 +383,7 @@ Since we have opted for a modular code and work approach, each piece of work we 
 \label{fig:schedule}
 \end{figure}
 \end{landscape}
+\pagestyle{plain}
 \restoregeometry
 
 \appendix
