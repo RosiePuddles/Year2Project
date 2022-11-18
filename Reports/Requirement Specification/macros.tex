@@ -1,29 +1,35 @@
 \newcommand{\musthave}{{\color{red}Must have}}
 \newcommand{\shouldhave}{{\color{orange}Should have}}
 \newcommand{\couldhave}{{\color{Green}Could have}}
+\usepackage{longtable}
+\usepackage{boldline}
 
-\newcommand{\FunctionalReq}[7]{
-\begin{tabularx}{\textwidth}{|L{0.55}|R{1.45}|}
-	\hline
-	\textbf{ID - Name} & \textbf{\makecell*{#1 #2}} \\\specialrule{.12em}{.05em}{.05em}
-	\textbf{Description} & \makecell*{#3} \\\hline
-	\textbf{\makecell*{{\color{red}Mu\color{orange}Sh\color{Green}Co} - Priority}} & \makecell*{#4} \\\hline
-	\textbf{Dependencies} & \makecell*{#5} \\\hline
-	\textbf{Expected Results} & \makecell*{#6} \\\hline
-	\textbf{Exception handling} & \makecell*{#7} \\\hline
-\end{tabularx}
+\newcommand{\FunctionalReq}[8]{
+\begin{center}
+\begin{longtable}{|p{0.275\textwidth}|p{0.725\textwidth}|}
+\hline
+	\textbf{ID - Name} & \textbf{#1 - #2} \\\hlineB{2}
+	\textbf{Description} & #3 \\\hline
+	\textbf{\makecell*{{\color{red}Mu\color{orange}Sh\color{Green}Co} - Priority}} & #4
+	
+	#5 \\\hline
+	\textbf{Dependencies} & #6 \\\hline
+	\textbf{Expected Results} & #7 \\\hline
+	\textbf{Exception handling} & #8 \\\hline
+\end{longtable}
+\end{center}
 
 }
 \newcommand{\NonFunctionalReq}[7]{
-\begin{tabularx}{\textwidth}{|L{0.55}|R{1.45}|}
+\begin{longtable}{|p{0.275\textwidth}|p{0.725\textwidth}|}
 	\hline
-	\textbf{ID - Name} & \textbf{\makecell*{#1 #2}} \\\specialrule{.12em}{.05em}{.05em}
-	\textbf{Description} & \makecell*{#3} \\\hline
-	\textbf{Dependencies} & \makecell*{#4} \\\hline
-	\textbf{Priority} & \makecell*{#5} \\\hline
-	\textbf{Metrics} & \makecell*{#6} \\\hline
-	\textbf{Constraints} & \makecell*{#7} \\\hline
-\end{tabularx}
+	\textbf{ID - Name} & \textbf{#1 #2} \\\hlineB{2}
+	\textbf{Description} & #3 \\\hline
+	\textbf{Dependencies} & #4 \\\hline
+	\textbf{Priority} & #5 \\\hline
+	\textbf{Metrics} & #6 \\\hline
+	\textbf{Constraints} & #7 \\\hline
+\end{longtable}
 
 }
 \newcommand{\NonFunctionalReqS}[8]{

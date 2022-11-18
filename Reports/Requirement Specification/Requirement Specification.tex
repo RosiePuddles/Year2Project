@@ -81,6 +81,7 @@ Lan et al. \cite{lan_slow_2021} demonstrated a feasible study for multimodal fee
 
 Hølledig et al. \cite{holledig_zenvr_2018} demonstrated a VR based meditation environment also using biofeedback. Their environment was a generated forest environment with different amounts of fog depending on real-time evaluation of the user's meditative state. Whilst they failed to show any meaningful benefits, they do note that the use of biofeedback has potential to be useful. The authors also note of significant issue with the Myndplay headband that resulted in having to redesign their tests.
 
+\newpage
 \section{Solution Requirements}
 \label{sec:req}
 
@@ -90,26 +91,137 @@ Hølledig et al. \cite{holledig_zenvr_2018} demonstrated a VR based meditation e
 \begin{figure}[h!]
 	\centering
 	\begin{tikzpicture}[
-		node distance=17mm,
-		node/.style={rectangle, draw=black, minimum width=22mm, minimum height=10mm}
+		node distance=1cm and 0.3cm,
+		auto,
+		node/.style={rectangle, draw=black, minimum width=22mm, minimum height=10mm},
+		keynode/.style={rectangle, draw=black, minimum width=7mm, minimum height=7mm}
 	]
-		\node[node](fr-1){FR-1};
-		\node[node](fr-2)[below of=fr-1,xshift=-17mm]{FR-2};
-		\node[node](fr-3)[below of=fr-1,xshift=17mm]{FR-3};
+		\node[node](frs-1){FRS-1};
+		\node[node](frs-2)[below left =of frs-1]{FRS-2};
+		\node[node](frs-3)[below right =of frs-1]{FRS-3};
+		\node[node](frd-1)[below =of frs-2]{FRD-1};
+		\node[node](frd-3)[below =of frs-3]{FRD-3};
+		\node[node](frd-2)[right =of frd-3,xshift=0.5cm]{FRD-2};
+		\node[node](frd-4)[right =of frs-3,xshift=0.5cm]{FRD-4};
+		\node[node](fre-1)[right =of frd-4,xshift=0.5cm]{FRE-1};
+		\node[node](fre-2)[above =of frd-4]{FRE-2};
+		\node[node](fre-3)[right =of fre-2,xshift=0.5cm]{FRE-3};
 		
-		\draw[{Latex[length=2.5mm,width=2mm]}-{Latex[length=2.5mm,width=2mm]}](fr-1) -- (fr-2);
-		\draw[-{Latex[length=2.5mm,width=2mm]}](fr-1) -- (fr-3);
+		\draw[-{Latex[length=2.5mm,width=2mm]}](frs-1) -- (frs-2);
+		\draw[-{Latex[length=2.5mm,width=2mm]}](frs-1) -- (frs-3);
+		\draw[-{Latex[length=2.5mm,width=2mm]}](frd-1) -- (frs-2);
+		\draw[-{Latex[length=2.5mm,width=2mm]}](frd-1) -- (frs-3);
+		\draw[-{Latex[length=2.5mm,width=2mm]}](frd-3) -- (frs-2);
+		\draw[-{Latex[length=2.5mm,width=2mm]}](frd-3) -- (frs-3);
+		\draw[-{Latex[length=2.5mm,width=2mm]}](frd-3) -- (frd-2);
+		\draw[-{Latex[length=2.5mm,width=2mm]}](frd-4) -- (frd-3);
+		\draw[-{Latex[length=2.5mm,width=2mm]}](fre-1) -- (frd-4);
+		
+		% key
+		\node[keynode] at (7,-6)(a){a};
+		\node[keynode](b)[right =of a,xshift=1cm]{b};
+		\draw[-{Latex[length=2.5mm,width=2mm]}](a) -- (b) node[label={[yshift=9mm,xshift=-10mm]Key},midway,yshift=-1cm] {a depends on b};
 	\end{tikzpicture}
 	\caption{Functional dependency graph}
 \end{figure}
 
+\subsubsection{Sensor Requirements}
+
 \FunctionalReq
-{FR-S-1}{Stability}
-{Description\\Over multiple lines}
-{Priority - \musthave \shouldhave \couldhave}
-{No dependencies}
-{Results}
-{let it all crash}
+{FRS-1}{Baseline Readings}
+{Baseline readings should be taken for each new user of the software. This should occur over 90 seconds where the user remains seated without  the VR headset on}
+{Medium - \shouldhave}
+{Baseline values could be inferred from averages i.e. average heart rate for someone the same age, however, this wouldn’t be ideal}
+{FRS-2, FRS-3}
+{Obtain an average value for the heart rate, concentration and meditation values of the user prior to meditating.}
+{If calibration fails then check the positioning of the sensors on the user and reposition if necessary. If that fails try again after resetting and restarting the failing sensor}
+
+\FunctionalReq
+{FRS-2}{Heart Rate Monitor Connectivity}
+{The heart rate monitor should return readings at regular intervals through a Bluetooth connection}
+{High - \musthave}
+{For the application to be adaptive, it needs to have a constant data stream of heart rate data}
+{None}
+{Obtain a constant stream of data detailing the heart rate of the user at specific times}
+{If calibration fails then check the positioning of the sensor on the user and reposition if necessary. If that fails try again after resetting and restarting the heart rate monitor}
+
+\FunctionalReq
+{FRS-3}{EEG Connectivity}
+{The EEG should return readings at regular intervals through a Bluetooth connection}
+{High - \musthave}
+{For the application to be adaptive, it needs to have a constant data stream of values from the EEG}
+{None}
+{Obtain a constant stream of data detailing the concentration and meditation score of the user at specific times}
+{If calibration fails then check the positioning of the sensor on the user and reposition if necessary. If that fails try again after resetting and restarting the EEG}
+
+\subsubsection{Data Collection Requirements}
+
+\FunctionalReq
+{FRD-1}{Storing Sensor Data}
+{EEG and Heart Rate readings should be stored with timestamps throughout the session}
+{High - \musthave}
+{As emphasised by our client, making sure to generate data that can be studied is perhaps the most important requirement of our system}
+{FRS2, FRS3}
+{Obtain an XML file for each session with EEG and heart rate data fields included}
+{Identify whether the exception occurs because of the connectivity of the sensors or the code for producing data files. If it is the former case, then refer to exception handling for FRS2 and FRS3. If it is the latter case then not much can be done apart from providing a form for feedback as this would be a bug in the code}
+
+\FunctionalReq
+{FRD-2}{Storing User Behaviour}
+{Behaviour about how the user interacts with the virtual environment should be stored with timestamps. This includes what their attention is focussed on and their movement}
+{High - \shouldhave}
+{Although generating data that can be studied is very important for our application, data that is collected from the sensors is of greater importance. Collecting data from how the user interacts with the environment could be difficult and so although we would like this to be done, it is not a must have requirement}
+{None}
+{Obtain an XML file for each session with user gaze tracking data}
+{An exception occurring would mean a failure of the code. Not much can be done apart from providing a form for feedback as this would be a bug in the code}
+
+\FunctionalReq
+{FRD-3}{Performance of meditation is measured and displayed at the end of a session}
+{The user's performance throughout the meditation exercise should be evaluated, and then displayed to them at the end of a session}
+{Medium - \couldhave}
+{Seeing how you performed after a session gamifies the program and gives the user insight into how well they have performed, but it is not a crucial feature from speaking to the client}
+{FRS2, FRS3, FRD2}
+{A value, calculated from a mixture of variables, including heart rate, meditation value (from the EEG), head movement. This value would indicate how well the user meditated}
+{Two main types of exception could occur for this requirement. If the value is not well computed, i.e the formula used does not accurately indicate how well the user has meditated, a feedback form could be provided where users could share their opinion. The formula could be perhaps reworked in this case.
+
+If some code means that the value calculated is not displayed or produces a value outside of the range of 1 to 100 then this is an error in the code. Not much can be done apart from providing a form for feedback}
+
+\FunctionalReq
+{FRD-4}{Past meditations performance is stored and can be displayed against session number in a graph}
+{For a particular user, performance from session to session will be stored and can be displayed in a graph for them against the session number}
+{Medium - \couldhave}
+{Gamifying the meditation would help users become more motivated to continue as they would  tangibly be able to see their progress. Despite this, we have called this objective Could Have as such a feature might make the experience more stressful. It is therefore a more experimental requirement, that could be implemented if it was known to aid motivation}
+{FRD-3}
+{A graph, where the y axis is meditation score (from 1 to 100) and the x axis is the session number. Data points will be plotted in this graph with a line connecting them}
+{If the graph is not formatted correctly, or does not display the most recent results, we could have a refresh button to run the code again that produces it}
+
+\subsubsection{Environmental Requirements}
+
+\FunctionalReq
+{FRE-1}{Start Menu}
+{There should be a start menu that allows the user to select whether to do a walkthrough/tutorial, to complete a meditation session or to view their progress}
+{High - \musthave}
+{A menu would be necessary to be able to access the various functionality of the software}
+{FRD-4}
+{The user can select one of the three possible options using their hand controllers and then once selected, get access to it}
+{An exception occurring would mean a failure of the code. Not much can be done apart from providing a form for feedback as this would be a bug in the code}
+
+\FunctionalReq
+{FRE-2}{The user should be immersed in a virtual reality environment}
+{The user should be immersed in a virtual world for meditation. At the moment we want to do this in a space themed environment}
+{High - \musthave}
+{This is a fundamental requirement for the software so that we can take advantage of VR when compared to more conventional ways of meditating}
+{None}
+{The user's presence should be simulated in a virtual environment. They should be able to look around, move and interact with it}
+{If the user is not properly immersed in the environment we will display a warning message telling them to restart the application and reconfigure their headset}
+
+\FunctionalReq
+{FRE-3}{The user can access a pause menu}
+{During the meditation, if the user is feeling uncomfortable or needs to adjust a or refit a sensor they should be able to easily pause the session}
+{Medium - \shouldhave}
+{The application can always be left through taking the headset off, however it would be}
+{None}
+{The user's presence should be simulated in a virtual environment. They should be able to look around, move and interact with it}
+{If the user is not properly immersed in the environment we will display a warning message telling them to restart the application and reconfigure their headset}
 
 \subsection{Non-functional Requirements}
 \label{ssec:nf_req}
@@ -121,8 +233,8 @@ Hølledig et al. \cite{holledig_zenvr_2018} demonstrated a VR based meditation e
 		node/.style={rectangle, draw=black, minimum width=22mm, minimum height=10mm}
 	]
 		\node[node](nfr-1){NFR-1};
-		\node[node](nfr-2)[below of=fr-1,xshift=-17mm]{NFR-2};
-		\node[node](nfr-3)[below of=fr-1,xshift=17mm]{NFR-3};
+		\node[node](nfr-2)[below of=nfr-1,xshift=-17mm]{NFR-2};
+		\node[node](nfr-3)[below of=nfr-1,xshift=17mm]{NFR-3};
 		
 		\draw[{Latex[length=2.5mm,width=2mm]}-{Latex[length=2.5mm,width=2mm]}](nfr-1) -- (nfr-2);
 		\draw[-{Latex[length=2.5mm,width=2mm]}](nfr-1) -- (nfr-3);
