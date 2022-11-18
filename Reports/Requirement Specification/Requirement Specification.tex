@@ -9,7 +9,7 @@
 \usepackage{tikz}
 \usepackage{ctable}
 \usepackage{listings}
-\usepackage[style=numeric-comp,alldates=iso,sorting=none]{biblatex}
+\usepackage[style=numeric-comp,alldates=iso]{biblatex}
 \usetikzlibrary{arrows.meta}
 \renewcommand{\cellalign}{lc}
 \newcolumntype{L}[1]{>{\hsize=#1\hsize\raggedright\arraybackslash}X}
@@ -38,7 +38,7 @@
 
 This document provides the requirement specifications for our virtual reality (VR) meditation application, referred to henceforth as `the product'; the specific software for the product shall be referred to as `the software'. This document provides an introduction (\cref{sec:intro}) to the project, covering the justification (\cref{ssec:just}), scope (\cref{ssec:scope}), and systems (\cref{ssec:desc}); the requirements for the system (\cref{sec:req}), both functional (\cref{ssec:f_req}) and non-functional (\cref{ssec:nf_req}), and potential risks and issues (\cref{ssec:risks}); the development of the project (\cref{sec:dev}) in terms of the approach (\cref{ssec:dev_approach}) and schedule (\cref{ssec:schedule}).
 
-This project is for Professor Alexandra Cristea who shall henceforth be referred to as 'the client'. The client has given us the project of developing a VR meditation application with the possible use as the software basis for research into the topic.
+This project is for Professor Alexandra Cristea who shall henceforth be referred to as 'the client'. The client has given us the project of developing a VR meditation application with the possible use as a basis for research into the topic. This project aims to help those who have not done any, or have done very little, meditation before by giving them an immersive VR world to aid concentration and relaxation.
 
 \subsection{Project Scope}
 \label{ssec:scope}
@@ -47,11 +47,11 @@ This project is intended for those who have never done any, or done very little,
 
 \begin{itemize}
 	\item Personalisation over customisation\\
-	The client would prefer for the project to personalise, that is automatic adjustments\footnote{Due to the early stage of the project, adjustments here is used in a broad sense in relation to general environmental changes such as colours. This choice was partly inspired by the research aspect of the project.} to suit the user, itself rather than have the user customise the project, that is allowing the user to alter the environment
+	The client would prefer for the project to personalise, that is automatic adjustments to suit the user, itself rather than have the user customise the project, that is allowing the user to alter the environment
 	\item Stability\\
 	The client would prefer fewer stable features over more less-stable features
 	\item Modularity\\
-	The client would prefer the software to be modular\footnote{Modular here refers to the practice of ensuring code is written in such a way that sections can be reused in different projects with minimal overhead or time required for implementation} to allow for ease of reuse in future projects
+	The client would prefer the software to be modular to allow for ease of reuse in future projects
 \end{itemize}
 
 The client would also like the potential to use the project later on in a research context. This is not a primary consideration of ours, but we will use this to guide our development. To ensure that our project can be as seamlessly used in this context with little impact on the project itself, we will make reference to relevant literature where necessary to ensure our implementations of MM is as concurrent with current literature as we can make it\footnote{The authors can find little research on MM with VR implementations. There is a significant amounts of research into VR applications and MM separately which we will use to guide our development}.
@@ -71,7 +71,7 @@ The data metrics will be constructed to account for global limits and will be pe
 
 Each user will have an associated account that will communicate with the server. This account will contain the user's name and personalisation data. The user will be able to access a history of sessions via a request to the server.
 
-The server itself will be run by a Python script that can be run on any computer. For the purpose of product demonstration, we will ensure the same computer runs both the server and Quest app in lieu of a server with a static IP. The server will store user account data, raw session data, and session metric results. Data will be stored in a XML format, with each user having a folder under their username, with sessions and user data within that folder. XML has been chosen for data storage due to it's wide use and simplicity. XML also allows for data type definitions for which current incomplete DTD are given in \cref{apdx:xml_dtd}. this wide and simple use ensures a large number of available tools to work with XML and is scalable beyond the expected required number of users thus causing little to no scalability issues.
+The server itself will be run by a Python script that can be run on any computer. For the purpose of product demonstration, we will ensure the same computer runs both the server and Quest app in lieu of a server with a static IP. The server will store user account data, raw session data, and session metric results. Data will be stored in a XML format, with each user having a folder under their username, with sessions and user data within that folder. Current, incomplete, XML DTD are given in \cref{apdx:xml_dtd}.
 
 \subsubsection{Current systems}
 
@@ -80,8 +80,6 @@ There exists several current systems for integrating VR into meditation. We will
 Lan et al. \cite{lan_slow_2021} demonstrated a feasible study for multimodal feedback meditation in VR. They used g-tummo meditation which has some well researched benefits \cite{kozhevnikov_neurocognitive_2013} but is a fairly advanced technique. As such the multimodal feedback system allows less experienced meditators to feel a more immediate feedback from meditation and thus attempt to help motivate people to continue meditation. This research showed that the multimodal feedback correlated with a decrease in breathing rate and helped maintain user attention, measured via tiredness.
 
 Hølledig et al. \cite{holledig_zenvr_2018} demonstrated a VR based meditation environment also using biofeedback. Their environment was a generated forest environment with different amounts of fog depending on real-time evaluation of the user's meditative state. Whilst they failed to show any meaningful benefits, they do note that the use of biofeedback has potential to be useful. The authors also note of significant issue with the Myndplay headband that resulted in having to redesign their tests.
-
-For completeness, we note that this is a novel project with the client not currently using any similar system for purposes similar to the purposes of our application.
 
 \newpage
 \section{Solution Requirements}
@@ -126,7 +124,15 @@ For completeness, we note that this is a novel project with the client not curre
 	\end{tikzpicture}
 	\caption{Functional dependency graph}
 \end{figure}
-
+The functional requirements of our system can be broken down into three main types: \textbf{Sensor, Environmental} and\textbf{ Data Collection}
+ 
+For our meditation app to be adaptive, we need data coming in that will inform us of the user’s physiological state. To achieve this, we need to be reading data from sensors fitted on the user and passing it into our system. The proper functioning of such sensors through them being correctly fitted, configured, and consistently and reliably transferring data is what is meant by the \textbf{sensor} requirements.
+ 
+To utilise the advantages that VR has, when compared to more conventional types of meditation, we shall build an environment that the user can become immersed within. This will be achieved by designing the visual and audio elements to be coherent with one another. Such an environment should immerse the user not just through its design but through it adapting based upon the user’s physiological state. When referring to \textbf{environmental} requirements, this encompasses the design of the environment, whether that is the menus, the walkthrough, or the meditation, and how that environment adapts to sensory data.
+ 
+Because of our app's potential to feed into research, it is important for the data not only to be used live to adapt the environment, but for it to also be stored for further analysis. When speaking with the client, the importance of data storage was made very clear to us, as she commented in our meeting that “if you remember anything from all of this, generate data from the people and from the environment and their interactions”. 
+ 
+We have thus designated all objectives related to the collection, storage, and processing of data underneath the \textbf{data collection} requirement heading.
 \subsubsection{Sensor Requirements}
 
 \FunctionalReq
@@ -228,38 +234,52 @@ If some code means that the value calculated is not displayed or produces a valu
 \subsection{Non-functional Requirements}
 \label{ssec:nf_req}
 
-\begin{figure}[h!]
-	\centering
-	\begin{tikzpicture}[
-		node distance=17mm,
-		node/.style={rectangle, draw=black, minimum width=22mm, minimum height=10mm}
-	]
-		\node[node](nfr-1){NFR-1};
-		\node[node](nfr-2)[below of=nfr-1,xshift=-17mm]{NFR-2};
-		\node[node](nfr-3)[below of=nfr-1,xshift=17mm]{NFR-3};
-		
-		\draw[{Latex[length=2.5mm,width=2mm]}-{Latex[length=2.5mm,width=2mm]}](nfr-1) -- (nfr-2);
-		\draw[-{Latex[length=2.5mm,width=2mm]}](nfr-1) -- (nfr-3);
-	\end{tikzpicture}
-	\caption{Non-functional dependency graph}
-\end{figure}
 
 \NonFunctionalReq
-{NFR-O-1}{Modularity}
-{Description\\Over multiple lines}
-{No dependencies}
-{Priority}
-{Metrics}
+{NFR-1}{The meditation should be accessible and easy to complete}
+{Usability Requirement}
+{High - For our client to faithfully test the potential of VR meditation on our target audience, it is important for it to be easy to complete}
+{This software is targeted at people who have little if any meditation experience. The walkthrough must allow users to become quickly comfortable in using the software to meditate}
+{The mean time of progressing from the walkthrough to starting a meditation session should be \le 5 minutes}
 {Constraints}
+{N/A}
 
-\NonFunctionalReqS
-{NFR-S-1}{Modularity}
-{Description\\Over multiple lines}
-{No dependencies}
-{Priority}
-{Metrics}
-{Constraints}
-{Security}
+\NonFunctionalReq
+{NFR-2}{The buttons should feel like they respond instantaneously to the user}
+{Performance Requirement}
+{High - We want to prevent the user becoming frustrated using our meditation software through slow menus}
+{The software should feel instantaneous to the user after selecting one of the main menu buttons}
+{From pressing a button, the next scene should begin loading within \le 400 ms}
+{Constraints of Unity being able to quickly load the required scenes and the Oculus Quest being able to update its display}
+{N/A}
+
+\NonFunctionalReq
+{NFR-3}{The environment should react in real-time to the users sensor data}
+{Performance Requirement}
+{High - For us to utilise the effects of biofeedback for meditation, the user needs to be constantly aware of their physiology through the environment}
+{The software should work in real-time to display through the environment, the users physiological parameters}
+{From the sensor data coming into Unity, the environment should adapt within \le 1 second}
+{Constraints on the Oculus Quest, Unity and C\# on updating the environment to meet this metric}
+{N/A}
+
+\NonFunctionalReq
+{NFR-4}{All personal data collected shall be kept securely}
+{Security Requirement}
+{The software should adhere to GDPR through getting consent to collect personal data. In addition, there must be appropriate security measures to protect it}
+{Very High - In complying with the law, we must treat this requirement with the utmost importance}
+{No personal data shall be accessible to any unauthorised user}
+{Constraints on how the Oculus Quest is used, for example, another user might have access to the same account}
+{Data shall be encrypted before being stored. Only users holding the role "Meditation User" - the person whose data this is, and "Researcher" shall be authorised to view it}
+
+
+\NonFunctionalReq
+{NFR-5}{The client should feel confident in learning to use the system once it is handed over}
+{Operational Requirement}
+{The software shall be documented clearly and the user manual should detail the functional aspects and maintenance of the system}
+{High - For our client to be satisfied with our work, and for it to have potential in research, we need to ensure that it can be operated without our assistance}
+{The mark awarded to us by our client for the quality of our communication in the "Product Handover" section}
+{The client may be less familiar in things we assumed knowledge of in our documentation}
+{N/A}
 
 \subsection{Risks and Issues}
 \label{ssec:risks}
@@ -317,7 +337,6 @@ Since we have opted for a modular code and work approach, each piece of work we 
 
 \newgeometry{a4paper,total={155mm,265mm}}
 \begin{landscape}
-\pagestyle{empty}
 \begin{figure}
 \centering
 \begin{ganttchart}[
@@ -329,7 +348,7 @@ Since we have opted for a modular code and work approach, each piece of work we 
 	vrule/.style={very thick, blue}
 ]{2022-10-08}{2023-04-29}
 	\gantttitlecalendar{year, month=name}\\
-	\gantttitle{Familiarization}{33}\gantttitle{Primary Development}{72}\gantttitle{Feedback}{20}\gantttitle{Adjustment}{19}\gantttitle{Presentation and Review}{60}\\
+	\gantttitle{Familiarization}{33}\gantttitle{Primary Development}{72}\gantttitle{Feedback}{20}\gantttitle{Adjustment}{19}\gantttitle{Presentation and Review}{60}
 
     % req spec
     \ganttgroup[group/.append style={draw=black, fill=red!90!black}]{Requirement Specification}{2022-10-17}{2022-11-15}\\
@@ -383,7 +402,6 @@ Since we have opted for a modular code and work approach, each piece of work we 
 \label{fig:schedule}
 \end{figure}
 \end{landscape}
-\pagestyle{plain}
 \restoregeometry
 
 \appendix
@@ -443,5 +461,4 @@ Note that for the child nodes of \texttt{HR\_data} and \texttt{EEG\_data} in the
 \printbibliography
 
 \end{document}
-
 
