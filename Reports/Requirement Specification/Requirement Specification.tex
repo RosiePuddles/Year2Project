@@ -9,7 +9,8 @@
 \usepackage{tikz}
 \usepackage{ctable}
 \usepackage{listings}
-\usepackage[style=numeric-comp,alldates=iso]{biblatex}
+\usepackage{enumitem}
+\usepackage[style=numeric-comp,alldates=iso,sorting=none]{biblatex}
 \usetikzlibrary{arrows.meta}
 \renewcommand{\cellalign}{lc}
 \newcolumntype{L}[1]{>{\hsize=#1\hsize\raggedright\arraybackslash}X}
@@ -88,7 +89,19 @@ Hølledig et al. \cite{holledig_zenvr_2018} demonstrated a VR based meditation e
 \subsection{Functional Requirements}
 \label{ssec:f_req}
 
-\begin{figure}[h!]
+The functional requirements of our system can be broken down into three main types which are explained below:
+
+\begin{description}[font=\bfseries, leftmargin=1cm, style=nextline]
+\item[Sensor]
+For the app to be adaptive, we need data coming in that will inform us of the user’s physiological state. To achieve this, we need to be reading data from sensors fitted on the user and passing it into our system. The proper functioning of such sensors through them being correctly fitted, configured, and consistently and reliably transferring data is what is meant by the sensor requirements.
+\item[Environmental]
+To utilise the advantages that VR has, when compared to more conventional types of meditation, we shall build an environment that the user can become immersed within. This will be achieved by designing the visual and audio elements to be coherent with one another. Such an environment should immerse the user not just through its design but through it adapting based upon the user’s physiological state. When referring to environmental requirements, this encompasses the design of the environment, whether that is the menus, the walkthrough, or the meditation, and how that environment adapts to sensory data.
+\item[Data Collection]
+Because of our app's potential to feed into research, it is important for the data not only to be used live to adapt the environment, but for it to also be stored for further analysis. When speaking with the client, the importance of data storage was made very clear to us, as she commented in our meeting that `if you remember anything from all of this, generate data from the people and from the environment and their interactions'.
+We have thus designated all objectives related to the collection, storage, and processing of data underneath the data collection requirement heading.
+\end{description}
+
+\begin{figure}[t!]
 	\centering
 	\begin{tikzpicture}[
 		node distance=1cm and 0.3cm,
@@ -240,29 +253,26 @@ If some code means that the value calculated is not displayed or produces a valu
 {Usability Requirement}
 {High - For our client to faithfully test the potential of VR meditation on our target audience, it is important for it to be easy to complete}
 {This software is targeted at people who have little if any meditation experience. The walkthrough must allow users to become quickly comfortable in using the software to meditate}
-{The mean time of progressing from the walkthrough to starting a meditation session should be \le 5 minutes}
+{The mean time of progressing from the walkthrough to starting a meditation session should be $\le$5 minutes}
 {Constraints}
-{N/A}
 
 \NonFunctionalReq
 {NFR-2}{The buttons should feel like they respond instantaneously to the user}
 {Performance Requirement}
 {High - We want to prevent the user becoming frustrated using our meditation software through slow menus}
 {The software should feel instantaneous to the user after selecting one of the main menu buttons}
-{From pressing a button, the next scene should begin loading within \le 400 ms}
+{From pressing a button, the next scene should begin loading within $\le$400 ms}
 {Constraints of Unity being able to quickly load the required scenes and the Oculus Quest being able to update its display}
-{N/A}
 
-\NonFunctionalReq
+\NonFunctionalReqSec
 {NFR-3}{The environment should react in real-time to the users sensor data}
 {Performance Requirement}
 {High - For us to utilise the effects of biofeedback for meditation, the user needs to be constantly aware of their physiology through the environment}
 {The software should work in real-time to display through the environment, the users physiological parameters}
-{From the sensor data coming into Unity, the environment should adapt within \le 1 second}
+{From the sensor data coming into Unity, the environment should adapt within $\le$1 second}
 {Constraints on the Oculus Quest, Unity and C\# on updating the environment to meet this metric}
-{N/A}
 
-\NonFunctionalReq
+\NonFunctionalReqSec
 {NFR-4}{All personal data collected shall be kept securely}
 {Security Requirement}
 {The software should adhere to GDPR through getting consent to collect personal data. In addition, there must be appropriate security measures to protect it}
@@ -279,17 +289,53 @@ If some code means that the value calculated is not displayed or produces a valu
 {High - For our client to be satisfied with our work, and for it to have potential in research, we need to ensure that it can be operated without our assistance}
 {The mark awarded to us by our client for the quality of our communication in the "Product Handover" section}
 {The client may be less familiar in things we assumed knowledge of in our documentation}
-{N/A}
 
 \subsection{Risks and Issues}
 \label{ssec:risks}
 
+\subsubsection{Technical Risks}
+\Risk{RT-1}{Limited knowledge of Unity}
+{Very few members of our team has previous experience working in Unity and the programming language used within it (C\#). This means that our abilities may be overestimated when creating the product for the client which will cause a worse quality product than was expected. Additionally, progress could be significantly delayed due to our team having to research and learn methods to implement the project requirements.}
+{During the year our team will learn C\# using tutorials and through practical use. This includes the time before project development is due to start so that the development process can be as streamlined as possible. We will also regularly collaborate to ensure no one is stuck on issues and improve as a group on any problems we occur.}
+\Risk{RT-2}{Limited knowledge of meditation practices}
+{None of our team have done any meditation before starting the project. This could cause incorrect meditation practices being used within the VR meditation project which could lead to inaccurate data not actively reflecting proper types of meditation. This means that the client will not be satisfied with the product as it is not usable for their research.}
+{We have researched into meditation and will continue to do so during development. This includes finding research papers focussing on meditation and VR environments, and iteratively developing the project to increase the effectiveness of the meditation methods used by analysing the data collected.}
+\Risk{RT-3}{Low accuracy of data from sensors}
+{Data produced by sensors could be inaccurate causing the project to incorrectly adapt to changes. The data is also required to be stored so it can be used for research in the future and inaccurate data would hinder this research.}
+{Where possible, we will try to get reliable data sensors and ensure our systems in place to send and process this data are also reliable by testing them extensively. We will try to detect inaccuracy in data by collecting large amounts of reliable data and prevent this data from being used both in the program and saved for further research.}
+\Risk{RT-4}{Data Security}
+{Data that is saved could contain personal data and can be used in the program again. If the security of this data is compromised, personal data could be leaked and the data could be modified to affect the program maliciously.}
+{Ensure that the data that is saved is secure on the machine it is stored on. This can be expected since it is within university and only our client will have the program (since there is no suggestion of further software distribution). Data that could be modified maliciously should be detected by the program to prevent errors and malicious use of the software.}
+
+\subsubsection{Project Risks}
+\Risk{RP-1}{Budget Constraints}
+{Unity is free to use however the hardware used is not. The Meta Quest headset and sensors can cost a considerable amount. For example, EEG headsets can be very expensive. These pieces of hardware are essential to the project as we require VR and a method to collect data.}
+{We will use our available budget effectively in obtaining relevant hardware that is reliable while remaining within the budget. We have planned what data we want to use and what hardware we already have to minimise further costs of the project.}
+\Risk{RP-2}{Ill-defined project requirements}
+{If the project requirements are not properly defined this can mean that features the client wants could be excluded from the final product and unnecessary features could be included. This can make the final product quality worse and waste our time.}
+{After our initial client meeting, we have sent over a project specification draft to the client to ensure that all aspects of the project are correctly specified and correcting any that are not using feedback from the client. Additionally, we will remain in contact with our client to ensure the product is always what they expect it to be, especially if there are issues not explicitly covered in the project specification.}
+\Risk{RP-3}{Poor communication with client}
+{Due to the busy schedules of both our team and our client, regular meetings are not feasible. Limited meetings and engagement with our client can lead to miscommunications and incorrect assumptions about the final product. This can lead to an undesirable VR meditation product which would not be suitable for the client’s needs.}
+{Where we have in-person meetings, we will ensure we are prepared and have all issues, questions and queries ready. Additionally, we will continue to be in contact with our client via email on a regular basis for any more urgent issues or questions.}
+
+\subsubsection{Other Risks}
+\Risk{RO-1}{Poor usability and user experience}
+{A poor user experience can be undesirable for the client and any users of the system. Additionally, if the system is not easy-to-use, this could affect the data from sensors affecting our client’s further research into the topic.}
+{We will iteratively develop our program to ensure that the user experience is enjoyable and easy. Where possible we will get our client and other potential users to test the usability and give feedback so that it can be updated.}
+\Risk{RO-2}{Poor output data}
+{One of the main needs for the system is to output data which can be used in further research by our client. If there is not enough usable data, this could hinder our client’s research.}
+{Due to the data collection being collected by hardware and software not created by us, issues with these can be difficult to fix. We will make sure out data set we collect is large meaning that outliers do not greatly affect the population. If issues are persistent in data collection, we can process this data to try to fix or remove it.}
+\Risk{RO-3}{Poor documentation and lack of modular code}
+{Poor product documentation and a lack of modular source code can prevent the product from being further scaled by the client after it has been handed over to them.}
+{We will ensure that as code is written modularly, and documentation is written alongside it. We will plan code and objects before creating them. Where applicable we will review code to ensure documentation is of a high quality and code is modular so can be easily built upon. We will also use linting tools to ensure no documentation is missing and lightly enforce a coding style for readability.}
+
 \subsubsection{Risk Matrix}
 
 \RiskMatrix
-{r1\\test}{r2}{r3}
-{r4}{r5\\test}{r6}
-{r7}{r8}{r9\\test}
+% low | medium | high
+{RO-3}{RP-1, RP-3}{RT-3, RT-4} % unlikely
+{RO-2}{}{RP-2, RO-1} % possible
+{}{RT-1, RT-2}{} % likely
 
 \section{Project Development}
 \label{sec:dev}
