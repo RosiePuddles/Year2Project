@@ -295,7 +295,7 @@ If some code means that the value calculated is not displayed or produces a valu
 {None of our team have done any meditation before starting the project. This could cause incorrect meditation practices being used within the VR meditation project which could lead to inaccurate data not actively reflecting proper types of meditation. This means that the client will not be satisfied with the product as it is not usable for their research.}
 {We have researched into meditation and will continue to do so during development. This includes finding research papers focussing on meditation and VR environments, and iteratively developing the project to increase the effectiveness of the meditation methods used by analysing the data collected.}
 \Risk{RT-3}{Low accuracy of data from sensors}
-{Data produced by sensors could be inaccurate causing the project to incorrectly adapt to changes. The data is also required to be stored so it can be used for research in the future and inaccurate data would hinder this research.}
+{Data produced by sensors could be inaccurate causing the project to incorrectly adapt to changes. The data is also required to be stored so it can potentially be used for research in the future and inaccurate data would hinder this research.}
 {Where possible, we will try to get reliable data sensors and ensure our systems in place to send and process this data are also reliable by testing them extensively. We will try to detect inaccuracy in data by collecting large amounts of reliable data and prevent this data from being used both in the program and saved for further research.}
 \Risk{RT-4}{Data Security}
 {Data that is saved could contain personal data and can be used in the program again. If the security of this data is compromised, personal data could be leaked and the data could be modified to affect the program maliciously.}
@@ -336,26 +336,25 @@ If some code means that the value calculated is not displayed or produces a valu
 
 \subsection{Development Approach}
 \label{ssec:dev_approach}
-For our Software Engineering Project, we have decided that an agile approach, specifically Extreme Programming (XP), fits our needs the best. It ensures that we can work on multiple tasks simultaneously and stipulates thorough planning and collaboration, which is inline with our concept
+For our Software Engineering Project, we have decided that an agile approach, specifically Extreme Programming (XP), fits our needs the best. It ensures that we can work on multiple tasks simultaneously and stipulates thorough planning and collaboration, which is inline with our concept.
 
 \subsubsection{Advantages of Extreme Programming}
 \begin{itemize}
     \item Extensive planning \\
-    As detailed in our Project Schedule, our approach has to rely significantly on prior planning and communication. Each piece of code / assessment is meticulously divided into smaller sub-tasks and evaluated based on its length and difficulty. Additionally, the group always confers with the client first to make sure the vision of client till matches the production code.
+    As detailed in our Project Schedule, our approach has to rely significantly on prior planning and communication. Each piece of code / assessment is meticulously divided into smaller sub-tasks and evaluated based on its length and difficulty. Additionally, the group always confers with the client first to make sure the vision of the client still matches the production code.
     \item Pair programming \\
     Two people from the group focus solely on the actual development of the software / code and cross check each other's work. 
     \item Simple design \\
-    After meeting whit the client, its has become clear that the data is the primary focus of this project. Personalisation (the collection of data and the subsequent adapting of the meditation) is will be the goal of this project, rather than creating a customizable environment, e.g. prioritizing eye tracking over more colors the user can choose from at the beginning of the meditation. This follows the principle of simple design, since we will focus on raw data collection rather than "bells and whistles".
+    After meeting with the client, its has become clear that the data is the primary focus of this project. Personalisation (the collection of data and the subsequent adapting of the meditation) will be the goal of this project, rather than creating a customizable environment, e.g. prioritizing eye tracking over more colors the user can choose from at the beginning of the meditation. This follows the principle of simple design, since we will focus on raw data collection rather than "bells and whistles".
     \item Refactoring and continuous integration \\
      During the primary development phase outlined in \cref{ssec:schedule} we will have to adapt and refactor the code multiple times for adjustment. This could be due to technical limitations and feedback given in the feedback stage in \cref{ssec:schedule}. Since the client has requested the code be as clean and understandable as possible due to the fact that it might be used for further research later, we will periodically refactor and simplify the code. This will happen frequently, since we are not experienced with VR or C \#.
-     During the primary development phase outlined in \cref{ssec:schedule} we will have to adapt and refactor the code multiple times for adjustment. This could be due to technical limitations and feedback given in the feedback stage in \cref{ssec:schedule}. Since the client has requested the code be as clean and understandable as possible due to the fact that it might be used for further research later, we will periodically refactor and simplify the code. This will happen frequently, since we are not experienced with VR or C\#.
 \end{itemize}
 \subsubsection{Disadvantages of other methods}
 \begin{itemize}
     \item Waterfall \\
     The Waterfall method does not offer the flexibility we need to manage this project in the given time frame. Implementing new requirements or coding practices is virtually impossible because everything has to stick to a rigid schedule. Dividing the workload would also not work with this method. In contrast, the XP method allows for more dynamic workflows and and reflects a realistic relationship with the client
     \item SCRUM \\
-    SCRUM has fixed, predefined roles which we feel are not suited for our project. Since we decide everything together and everyone cross checks everyone, there is no need for a SCRUM Master or a product owner. Additionally, the frequency of meetings and the general time spent on a sprint does not coincide with our project schedule. In contrast, XP does not have a predefined time strucutre and does not have hierarchical structures.   
+    SCRUM has fixed, predefined roles which we feel are not suited for our project. Since we decide everything together and everyone cross checks everyone, there is no need for a SCRUM Master or a product owner. Additionally, the frequency of meetings and the general time spent on a sprint does not coincide with our project schedule. However, XP does not have a predefined time strucutre and does not have hierarchical structures.   
     
     
 \end{itemize}
@@ -366,7 +365,6 @@ For our Software Engineering Project, we have decided that an agile approach, sp
 \Cref{fig:schedule} illustrates our timeline for the duration of this project. The Gantt chart is split into two parts: The actual developing stages of the software/code and the completion of the assessments themselves. 
 \subsubsection{Code}
 For the software we have the phases familiarisation with the VR-Headsets and C\#, the development of the code, feedback from users, testers and the client and minor adjustments in accordance with the provided feedback. Two people will always be working on solely writing the code. 
-For the software we the phases have familiarisation with the VR-Headsets and C\#, the development of the code, feedback from users, testers and the client and minor adjustments in accordance with the provided feedback. Two people will always be working on solely writing the code. 
 \subsubsection{Assessments}
 Since we have opted for a modular code and work approach, each piece of work we submit is extensively planned and reviewed:
 \begin{itemize}
@@ -505,4 +503,3 @@ Note that for the child nodes of \texttt{HR\_data} and \texttt{EEG\_data} in the
 \printbibliography
 
 \end{document}
-
