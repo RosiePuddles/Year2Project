@@ -18,7 +18,7 @@
 }
 
 \ProcessOptions\relax
-\usepackage[a4paper,total={170mm,250mm},showframe]{geometry}
+\usepackage[a4paper,total={170mm,250mm}]{geometry}
 \RequirePackage{authblk}
 \RequirePackage{titlesec}
 \setlength\parskip{0.5em}
