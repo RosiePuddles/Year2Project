@@ -66,7 +66,7 @@ The system will be a VR app intended for meditation with aspects of gamification
 
 The primary section of the app will be set in an environment designed to have as little distraction as possible whilst still allowing the app to be engaging. At present, we intend for the environment to be relatively featureless, with some objects orbiting the user. The objects will themselves have particles around them to obfuscate any highly contrasting areas. Each session will be approximately 10 to 20 minutes in length and various metrics will be measured throughout such as heart rate, EEG data, and eye tracking. This will be analysed and stored externally in accordance with the GDPR.
 
-Evaluation metrics will be applied to the raw data, the results of which will be used to compare sessions and measure improvement. These metrics will be user-specific and will require user-specific baseline data, as well as general data. To gather this baseline data, a short (at most 5 minutes) baseline session will be required before the user can complete any meditation.
+Evaluation metrics will be applied to the raw data, the results of which will be used to compare sessions and measure improvement. These metrics will be user-specific and will require user-specific baseline data, as well as general data. To gather this baseline data, a short (90 seconds) baseline test will be required before the user can complete any meditation.
 
 The data metrics will be constructed to account for global limits and will be personalised, via user-specific data, to ensure that any change can be measured relatively to the user and not to some global standard. With this we aim to ensure that all users can see a clear progression from session to session.
 
@@ -97,7 +97,7 @@ For the app to be adaptive, we need data that will inform us of the user’s phy
 \item[Environmental]
 To utilise the advantages that VR has, when compared to more conventional types of meditation, we shall build an environment that the user can become immersed within. This will be achieved by designing the visual and audio elements to be coherent with one another. Such an environment should immerse the user not just through its design but through it adapting based upon the user’s physiological state. When referring to environmental requirements, this encompasses the design of the environment, whether that is the UI, meditation, user interaction, or how the environment adapts to sensory data.
 \item[Data Collection]
-Because of the potential to for the app to be used in research, it is important for the data not only to be used live to adapt the environment, but for it to also be stored for further analysis. When speaking with the client, the importance of data storage was made very clear to us, as she commented in our meeting that `if you remember anything from all of this, generate data from the people and from the environment and their interactions'.
+Because of the potential for the app to be used in research, it is important for the data not only to be used live to adapt the environment, but for it to also be stored for further analysis. When speaking with the client, the importance of data storage was made very clear to us, as she commented in our meeting that `if you remember anything from all of this, generate data from the people and from the environment and their interactions'.
 We have thus designated all objectives related to the collection, storage, and processing of data under the data collection requirement heading.
 \end{description}
 
@@ -119,6 +119,7 @@ We have thus designated all objectives related to the collection, storage, and p
 		\node[node](fre-1)[right =of frd-4,xshift=0.5cm]{FRE-1};
 		\node[node](fre-2)[above =of frd-4]{FRE-2};
 		\node[node](fre-3)[right =of fre-2,xshift=0.5cm]{FRE-3};
+		\node[node](fre-4)[below right =of frd-1, yshift = 1cm]{FRE-4};
 		
 		\draw[-{Latex[length=2.5mm,width=2mm]}](frs-1) -- (frs-2);
 		\draw[-{Latex[length=2.5mm,width=2mm]}](frs-1) -- (frs-3);
@@ -130,6 +131,8 @@ We have thus designated all objectives related to the collection, storage, and p
 		\draw[-{Latex[length=2.5mm,width=2mm]}](frd-4) -- (frd-3);
 		\draw[-{Latex[length=2.5mm,width=2mm]}](fre-1) -- (frd-4);
 		
+		\draw[-{Latex[length=2.5mm,width=2mm]}](fre-4) -- (frs-2);
+		\draw[-{Latex[length=2.5mm,width=2mm]}](fre-4) -- (frs-3);
 		% key
 		\node[keynode] at (7,-6)(a){a};
 		\node[keynode](b)[right =of a,xshift=1cm]{b};
@@ -222,7 +225,7 @@ If some code means that the value calculated is not displayed or produces a valu
 
 \FunctionalReq
 {FRE-2}{The user should be immersed in a virtual reality environment}
-{The user should be immersed in a virtual world for meditation. At the moment we want to do this in a space themed environment}
+{The user should be immersed in a virtual world for meditation. At the moment we want to do this in a relatively featureless space themed environment}
 {High - \musthave}
 {This is a fundamental requirement for the software so that we can take advantage of VR when compared to more conventional ways of meditating}
 {None}
@@ -233,10 +236,19 @@ If some code means that the value calculated is not displayed or produces a valu
 {FRE-3}{The user can access a pause menu}
 {During the meditation, if the user is feeling uncomfortable or needs to adjust a or refit a sensor they should be able to easily pause the session}
 {Medium - \shouldhave}
-{The application can always be left through taking the headset off, however it would be}
+{The application can always be left through taking the headset off however, it would be preferred to pause the meditation, and when the user comes back for them to choose whether to resume, or to quit and start a new session}
 {None}
 {The user's presence should be simulated in a virtual environment. They should be able to look around, move and interact with it}
 {If the user is not properly immersed in the environment we will display a warning message telling them to restart the application and reconfigure their headset}
+
+\FunctionalReq
+{FRE-4}{The environment should adapt to the user}
+{Different aspects of the environment should adapt based upon the incoming heart rate and EEG data from the user}
+{Very High - \musthave}
+{One of our main aims of this software is personalisation. The intended way of adding personalisation is through the environment adapting to sensory data, so this requirement is mandatory and of very high importance}
+{FRS-2, FRS-3}
+{In response to increases in the meditation value the particles shall become more clear and vivid. In response to reduced heart rate the users camera view distance should increase, so they can see further into the environment}
+{If the bluetooth signal is not being correctly sent and received by the system then use the exception handling from FRS2 and FRS3. If that appears to work then it is likely an error in the code. Not much can be done apart from providing a form for feedback as this would be a bug}
 
 \subsection{Non-functional Requirements}
 \label{ssec:nf_req}
@@ -248,7 +260,7 @@ If some code means that the value calculated is not displayed or produces a valu
 {High - For our client to faithfully test the potential of VR meditation on our target audience, it is important for it to be easy to complete}
 {This software is targeted at people who have little if any meditation experience. The walkthrough must allow users to become quickly comfortable in using the software to meditate}
 {The mean time of progressing from the walkthrough to starting a meditation session should be $\le$5 minutes}
-{Constraints}
+{Constraints of our teams limited knowledge of meditation and being able to design something accessible (see risk RT2)}
 
 \NonFunctionalReqSec
 {NFR-2}{The buttons should feel like they respond instantaneously to the user}
@@ -281,7 +293,7 @@ If some code means that the value calculated is not displayed or produces a valu
 {Operational Requirement}
 {The software shall be documented clearly and the user manual should detail the functional aspects and maintenance of the system}
 {High - For our client to be satisfied with our work, and for it to have potential in research, we need to ensure that it can be operated without our assistance}
-{The mark awarded to us by our client for the quality of our communication in the ``Product Handover'' section}
+{The mark awarded to us by our client for the quality of our communication in the "Product Handover" section}
 {The client may be less familiar in things we assumed knowledge of in our documentation}
 
 \subsection{Risks and Issues}
@@ -290,7 +302,7 @@ If some code means that the value calculated is not displayed or produces a valu
 \subsubsection{Technical Risks}
 \Risk{RT-1}{Limited knowledge of Unity}
 {Very few members of our team has previous experience working in Unity and the programming language used within it (C\#). This means that our abilities may be overestimated when creating the product for the client which will cause a worse quality product than was expected. Additionally, progress could be significantly delayed due to our team having to research and learn methods to implement the project requirements.}
-{During the year our team will learn C\# using tutorials and through practical use. This includes the time before project development is due to start so that the development process can be as streamlined as possible. We will also regularly collaborate to ensure no one is stuck on issues and improve as a group on any problems we occur.}
+{During the year our team will learn C\# using tutorials and through practical use. This includes the time before project development is due to start so that the development process can be as streamlined as possible. We will also regularly collaborate to ensure no one is stuck on issues and improve as a group on any problems we encounter.}
 \Risk{RT-2}{Limited knowledge of meditation practices}
 {None of our team have done any meditation before starting the project. This could cause incorrect meditation practices being used within the VR meditation project which could lead to inaccurate data not actively reflecting proper types of meditation. This means that the client will not be satisfied with the product as it is not usable for their research.}
 {We have researched into meditation and will continue to do so during development. This includes finding research papers focussing on meditation and VR environments, and iteratively developing the project to increase the effectiveness of the meditation methods used by analysing the data collected.}
@@ -336,7 +348,7 @@ If some code means that the value calculated is not displayed or produces a valu
 
 \subsection{Development Approach}
 \label{ssec:dev_approach}
-For our Software Engineering Project, we have decided that an agile approach, specifically Extreme Programming (XP), fits our needs the best. It ensures that we can work on multiple tasks simultaneously and stipulates thorough planning and collaboration, which is inline with our concept.
+For the project, we have decided that an agile approach, specifically Extreme Programming (XP), fits our needs the best. It ensures that we can work on multiple tasks simultaneously and stipulates thorough planning and collaboration, which is inline with our concept.
 
 \subsubsection{Advantages of Extreme Programming}
 \begin{itemize}
@@ -345,9 +357,9 @@ For our Software Engineering Project, we have decided that an agile approach, sp
     \item Pair programming \\
     Two people from the group focus solely on the actual development of the software / code and cross check each other's work. 
     \item Simple design \\
-    After meeting with the client, its has become clear that the data is the primary focus of this project. Personalisation (the collection of data and the subsequent adapting of the meditation) will be the goal of this project, rather than creating a customizable environment, e.g. prioritizing eye tracking over more colors the user can choose from at the beginning of the meditation. This follows the principle of simple design, since we will focus on raw data collection rather than ``bells and whistles''.
+    After meeting with the client, its has become clear that the data is the primary focus of this project. Personalisation (the collection of data and the subsequent adapting of the meditation) will be the goal of this project, rather than creating a customizable environment, e.g. prioritizing eye tracking over more colors the user can choose from at the beginning of the meditation. This follows the principle of simple design, since we will focus on raw data collection rather than "bells and whistles".
     \item Refactoring and continuous integration \\
-     During the primary development phase outlined in \cref{ssec:schedule} we will have to adapt and refactor the code multiple times for adjustment. This could be due to technical limitations and feedback given in the feedback stage in \cref{ssec:schedule}. Since the client has requested the code be as clean and understandable as possible due to the fact that it might be used for further research later, we will periodically refactor and simplify the code. This will happen frequently, since we are not experienced with VR or C\#.
+     During the primary development phase outlined in \cref{ssec:schedule} we will have to adapt and refactor the code multiple times for adjustment. This could be due to technical limitations and feedback given in the feedback stage in \cref{ssec:schedule}. Since the client has requested the code be as clean and understandable as possible due to the fact that it might be used for further research later, we will periodically refactor and simplify the code. This will happen frequently, since we are not experienced with VR or C \#.
 \end{itemize}
 \subsubsection{Disadvantages of other methods}
 \begin{itemize}
