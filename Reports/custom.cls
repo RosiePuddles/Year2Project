@@ -16,13 +16,15 @@
 \end{center}\end{titlepage}
 }
 }
+
 \ProcessOptions\relax
-\RequirePackage[a4paper,total={155mm,250mm}]{geometry}
+\usepackage[a4paper,total={170mm,250mm}]{geometry}
 \RequirePackage{authblk}
-\RequirePackage{etoolbox}
 \RequirePackage{titlesec}
 \setlength\parskip{0.5em}
 \usepackage{indentfirst}
+\usepackage{hyperref}
+\usepackage{cleveref}
 \author{Simon Zaragoza-Dorwald, Rosie Bartlett, Lavish Bhojani, Dravin Gupta, Joseph Dunne, Callum Gray}
 \newcommand{\Title}[1]{\title{Creating a Virtual Reality Meditation Visualisation System\\\LARGE{#1}}\vspace{1cm}}
 \titlespacing\section{0pt}{10pt}{-3pt}
@@ -48,15 +50,32 @@
 }
 \renewcommand\theequation{\thesection.\arabic{equation}}
 \renewcommand\thefigure{\thesection.\arabic{figure}}
-\let\oldsection\section
-\renewcommand\section{
-\setcounter{equation}{0}
-\setcounter{figure}{0}
-\oldsection
-}
-\let\oldappendix\appendix
-\renewcommand\appendix{\newpage\oldappendix}
+\usepackage{etoolbox}
+\preto{\section}{\setcounter{equation}{0}\setcounter{figure}{0}}
+\preto{\appendix}{\newpage}
 \newcommand{\finish}{
 \listoffigures
 \listoftables
+}
+
+\RequirePackage{listings}
+\lstset{
+    commentstyle=\color{Emerald},
+    keywordstyle=\color{OrangeRed},
+    identifierstyle=\color{blue},
+    numberstyle=\tiny\color{black!50},
+    stringstyle=\color{ForestGreen},
+    basicstyle=\ttfamily\footnotesize,
+    breakatwhitespace=false,
+    breaklines=true,
+    captionpos=b,
+    keepspaces=true,
+    numbersep=5pt,
+    numbers=left,
+    numberstyle=\tiny\color{black},
+    stepnumber=5,
+    showspaces=false,
+    showstringspaces=false
+    showtabs=false,
+    tabsize=2
 }
