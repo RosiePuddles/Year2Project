@@ -1,2 +1,3 @@
 port = 5000
 api_key = "8wsaTz6bsmXDPXcr4IH6JocTQbDbga6u6XQ4hEn7X9S!WGYc9/WUcE28abQjo1gW"
+data_path = "data"

@@ -2,6 +2,7 @@
 use rocket::http::Status;
 
 mod api;
+#[doc(hidden)]
 mod conf;
 
 #[get("/")]
@@ -14,7 +15,7 @@ pub fn rocket() -> _ {
 	let mut custom_conf = rocket::config::Config::default();
 	custom_conf.port = conf::PORT;
 	rocket::custom(custom_conf)
-		.mount("/api", routes![api::submit])
+		.mount("/api", routes![api::paths::submit])
 }
 
 #[cfg(test)]
@@ -33,7 +34,9 @@ mod test {
 			let client = Client::tracked(rocket()).expect("valid rocket instance");
 			let mut resp = client.post(uri!("/api/submit"))
 				.cookie(Cookie::new("key", API_KEY))
-				.body("{\"a\":\"b\"}")
+				.body(
+					"{'user_id': '1', 'time_start': 1671080669, 'hr_data': []}".replace("'", "\"")
+				)
 				.dispatch();
 			assert_eq!(resp.status(), Status::Ok);
 		}

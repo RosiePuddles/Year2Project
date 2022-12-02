@@ -1,17 +1,12 @@
-//! # API functions
+//! # API paths
 //!
-//! This module includes paths for the API used with the Oculus
+//! This module includes the paths for use with the API
 
 use rocket::http::{Status, CookieJar};
-use rocket::serde::{Deserialize, json::Json};
+use rocket::serde::json::Json;
 use rocket::Request;
 
-use crate::conf::API_KEY;
-
-#[derive(Deserialize, Debug)]
-pub struct Data {
-	a: String
-}
+use crate::{conf::API_KEY, api::prelude::Data};
 
 /// Submit path
 ///

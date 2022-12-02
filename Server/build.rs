@@ -8,6 +8,7 @@ use serde::Deserialize;
 pub struct Config {
 	pub port: Option<u16>,
 	pub api_key: String,
+	pub data_path: String
 }
 
 fn main() -> Result<(), std::io::Error> {
@@ -21,7 +22,8 @@ fn main() -> Result<(), std::io::Error> {
 		Err(_) => panic!("Unable to find config file (config.toml)!")
 	};
 	std::fs::write("src/conf.rs", format!(
-		"pub const PORT: u16 = {};pub const API_KEY: &'static str = {:?};", config.port.unwrap_or(5000), config.api_key
+		"//! # Generated config values\npub const PORT: u16 = {};\npub const API_KEY: &'static str = {:?};\npub const DATA_PATH: &'static str = {:?};",
+		config.port.unwrap_or(5000), config.api_key, config.data_path
 	))?;
 	Ok(())
 }
