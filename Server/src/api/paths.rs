@@ -2,11 +2,11 @@
 //!
 //! This module includes the paths for use with the API
 
-use rocket::http::{Status, CookieJar};
+use rocket::http::{CookieJar, Status};
 use rocket::serde::json::Json;
 use rocket::Request;
 
-use crate::{conf::API_KEY, api::prelude::Data};
+use crate::{api::prelude::Data, conf::API_KEY};
 
 /// Submit path
 ///
@@ -14,13 +14,15 @@ use crate::{conf::API_KEY, api::prelude::Data};
 /// cookies sent with the request.
 /// If the given data cannot be serialised into the required struct, this will fail and return a 400
 /// response code (bad request)
-#[post("/submit", data="<data>")]
+#[post("/submit", data = "<data>")]
 pub fn submit(cookies: &CookieJar<'_>, data: Json<Data>) -> Status {
 	println!("{:?}", data);
 	if let Some(c) = cookies.get("key") {
-		if c.value() != API_KEY { return Status::Forbidden }
+		if c.value() != API_KEY {
+			return Status::Forbidden;
+		}
 	} else {
-		return Status::Forbidden
+		return Status::Forbidden;
 	}
 	Status::Ok
 }

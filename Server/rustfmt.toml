@@ -1,0 +1,5 @@
+unstable_features = true
+edition = "2021"
+fn_single_line = true
+hard_tabs = true
+format_generated_files = false

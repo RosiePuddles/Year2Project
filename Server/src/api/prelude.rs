@@ -7,7 +7,8 @@ use rocket::serde::Deserialize;
 /// # Submit data struct
 ///
 /// This is deserialized from JSON data submitted with the POST request.
-/// An example is given below with some sections omitted. For heart rate data (`hr_data`), see [`HR_Data`]
+/// An example is given below with some sections omitted. For heart rate data (`hr_data`), see
+/// [`HR_Data`]
 /// ```json
 /// {
 /// 	"user_id": "UID",
@@ -22,7 +23,7 @@ pub struct Data {
 	/// Session start time in epoch seconds
 	time_start: u64,
 	/// Heart rate data vector
-	hr_data: Vec<HR_Data>
+	hr_data: Vec<HR_Data>,
 }
 
 /// # Heart rate data point
@@ -32,5 +33,5 @@ pub struct HR_Data {
 	/// Measurement time in epoch seconds
 	time: u64,
 	/// Pulse value
-	pulse: u16
+	pulse: u16,
 }
