@@ -3,7 +3,6 @@
 //! This module contains the data types used by the API
 
 use rocket::serde::Deserialize;
-use serde::Serialize;
 
 /// # Submit data struct
 ///

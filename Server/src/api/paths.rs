@@ -4,8 +4,6 @@
 
 use rocket::http::{CookieJar, Status};
 use rocket::serde::json::Json;
-use rocket::Request;
-use std::num::ParseIntError;
 
 use std::path::Path;
 
@@ -55,7 +53,7 @@ pub fn new_user(cookies: &CookieJar<'_>, data: Json<User>) -> (Status, String) {
 			return (Status::InternalServerError, "".to_string());
 		}
 	};
-	let mut users = users_raw
+	let users = users_raw
 		.lines()
 		.filter_map(|l| l.split(",").collect::<Vec<_>>().try_into().ok());
 	let mut users_clone = users.clone();
@@ -65,8 +63,8 @@ pub fn new_user(cookies: &CookieJar<'_>, data: Json<User>) -> (Status, String) {
 	{
 		return (Status::Conflict, "".to_string());
 	}
-	let id = match u32::from_str_radix(users.last().unwrap_or(["", "", "000"])[0], 16) {
-		Ok(id) => id,
+	let id = match u32::from_str_radix(users.last().unwrap_or(["", "", "000"])[2], 16) {
+		Ok(id) => id + 1,
 		Err(e) => {
 			println!("Error parsing UID!\n{}", e);
 			return (Status::InternalServerError, "".to_string());
@@ -74,7 +72,7 @@ pub fn new_user(cookies: &CookieJar<'_>, data: Json<User>) -> (Status, String) {
 	};
 	#[cfg(not(debug_assertions))]
 	match std::fs::OpenOptions::new().append(true).open(uid_path) {
-		Ok(f) => match writeln!(f, format!("{},{},{}", data.uname, data.pin, id)) {
+		Ok(f) => match writeln!(f, "{}", format!("{},{},{}", data.uname, data.pin, id)) {
 			Ok(_) => {}
 			Err(e) => {
 				println!("Error appending {:?}!\n{}", uid_path, e);
@@ -86,7 +84,7 @@ pub fn new_user(cookies: &CookieJar<'_>, data: Json<User>) -> (Status, String) {
 			return (Status::InternalServerError, "".to_string());
 		}
 	};
-	(Status::Ok, id.to_string())
+	(Status::Ok, format!("{:0>3x}", id))
 }
 
 /// Login path

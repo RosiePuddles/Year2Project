@@ -36,13 +36,14 @@ This path is used to submit session data to the server. This path requires the s
 <tr><td>Path</td><td><code>/api/submit</code></td></tr>
 </table>
 
-| Response (Code)             | Description                                                                  |
-|-----------------------------|------------------------------------------------------------------------------|
-| Ok (200)                    | Session data correctly saved                                                 |
-| Bad request (400)           | Request body does not match required session data format (see example above) |
-| Forbidden (403)             | Missing or incorrect API key                                                 |
-| Gone (410)                  | User ID has been removed or never existed                                    |
-| Internal server error (500) | Server unable to save session data                                           |
+| Response (Code)             | Description                                                     |
+|-----------------------------|-----------------------------------------------------------------|
+| Ok (200)                    | Session data correctly saved                                    |
+| Bad request (400)           | Request body ius empty (see example above)                      |
+| Forbidden (403)             | Missing or incorrect API key                                    |
+| Gone (410)                  | User ID has been removed or never existed                       |
+| Unprocessable Entity (422)  | Body does not match required data structure (see example above) |
+| Internal server error (500) | Server unable to save session data                              |
 
 ### New user
 
@@ -50,7 +51,7 @@ This path is used to create a new user account. This path requires new user data
 ```json
 {
   "uname": "username",
-  "pin": "0000"
+  "pin": 0000
 }
 ```
 
@@ -61,13 +62,14 @@ If this path returns Ok(200), the response body will be the new user ID
 <tr><td>Path</td><td><code>/api/new</code></td></tr>
 </table>
 
-| Response (Code)             | Description                                                          |
-|-----------------------------|----------------------------------------------------------------------|
-| Ok (200)                    | User added to database                                               |
-| Bad request (400)           | Request body does not match required data format (see example above) |
-| Forbidden (403)             | Missing or incorrect API key                                         |
-| Conflict (409)              | Username already exists                                              |
-| Internal server error (500) | Server unable to read users or unable to make new user               |
+| Response (Code)             | Description                                                     |
+|-----------------------------|-----------------------------------------------------------------|
+| Ok (200)                    | User added to database                                          |
+| Bad request (400)           | Body is empty (see example above)                               |
+| Forbidden (403)             | Missing or incorrect API key                                    |
+| Conflict (409)              | Username already exists                                         |
+| Unprocessable Entity (422)  | Body does not match required data structure (see example above) |
+| Internal server error (500) | Server unable to read users or unable to make new user          |
 
 ### Login
 
@@ -75,7 +77,7 @@ This path is used to log in a user. This path requires user data to be in JSON f
 ```json
 {
   "uname": "username",
-  "pin": "0000"
+  "pin": 0000
 }
 ```
 
@@ -86,12 +88,13 @@ If this path returns Ok(200), the response body will be the user ID
 <tr><td>Path</td><td><code>/api/login</code></td></tr>
 </table>
 
-| Response (Code)             | Description                                                          |
-|-----------------------------|----------------------------------------------------------------------|
-| Ok (200)                    | User found and UID returned                                          |
-| Bad request (400)           | Request body does not match required data format (see example above) |
-| Unauthorised (401)          | Incorrect pin                                                        |
-| Forbidden (403)             | Missing or incorrect API key                                         |
-| Gone (410)                  | Username has been removed or never existed                           |
-| Internal server error (500) | Server unable to read users                                          |
+| Response (Code)             | Description                                                     |
+|-----------------------------|-----------------------------------------------------------------|
+| Ok (200)                    | User found and UID returned                                     |
+| Bad request (400)           | Body is empty (see example above)                               |
+| Unauthorised (401)          | Incorrect pin                                                   |
+| Forbidden (403)             | Missing or incorrect API key                                    |
+| Gone (410)                  | Username has been removed or never existed                      |
+| Unprocessable Entity (422)  | Body does not match required data structure (see example above) |
+| Internal server error (500) | Server unable to read users                                     |
 
