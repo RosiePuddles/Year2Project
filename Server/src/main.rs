@@ -13,7 +13,10 @@ fn base() -> (Status, &'static str) { (Status::NotAcceptable, "Please don't do t
 pub fn rocket() -> _ {
 	let mut custom_conf = rocket::config::Config::default();
 	custom_conf.port = conf::PORT;
-	rocket::custom(custom_conf).mount("/api", routes![api::paths::submit])
+	rocket::custom(custom_conf).mount(
+		"/api",
+		routes![api::paths::submit, api::paths::new_user, api::paths::login],
+	)
 }
 
 #[cfg(test)]
@@ -26,6 +29,7 @@ mod test {
 	#[cfg(test)]
 	mod api {
 		use super::*;
+		use json::object;
 
 		#[test]
 		fn submit() {
@@ -34,7 +38,19 @@ mod test {
 				.post(uri!("/api/submit"))
 				.cookie(Cookie::new("key", API_KEY))
 				.body(
-					"{'user_id': '1', 'time_start': 1671080669, 'hr_data': []}".replace("'", "\""),
+					object! {
+						"user_id": "1",
+						"time_start": 1671080669,
+						"hr_data": [
+							{ "time": 1671080702, "pulse": 40 },
+							{ "time": 1671080712, "pulse": 35 }
+						],
+						"gaze_data": [
+							{ "time": 1671080702, "yaw": 0, "pitch": -3.9 },
+							{ "time": 1671080707, "yaw": 12, "pitch": 55 }
+						]
+					}
+					.to_string(),
 				)
 				.dispatch();
 			assert_eq!(resp.status(), Status::Ok);

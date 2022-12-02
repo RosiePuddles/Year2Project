@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE session SYSTEM "../dtds/session.dtd">
+<session id="0">
+    <time>1671080669</time>
+    <hr_data>
+        <hr_element>
+            <time>1671080702</time>
+            <pulse>40</pulse>
+        </hr_element>
+        <hr_element>
+            <time>1671080712</time>
+            <pulse>35</pulse>
+        </hr_element>
+    </hr_data>
+    <gaze_data>
+        <gaze_element>
+            <time>1671080702</time>
+            <yaw>0</yaw>
+            <pitch>-3.9</pitch>
+        </gaze_element>
+        <gaze_element>
+            <time>1671080707</time>
+            <yaw>12</yaw>
+            <pitch>55</pitch>
+        </gaze_element>
+    </gaze_data>
+</session>

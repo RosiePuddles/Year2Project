@@ -1,0 +1,5 @@
+<!ELEMENT user (name, session_data, pdata)>
+<!ELEMENT name (#PCDATA)>
+<!ELEMENT session_data (session_total)>
+<!ELEMENT session_total (#PCDATA)>
+<!ELEMENT pdata ()>
