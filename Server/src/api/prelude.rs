@@ -8,8 +8,7 @@ use rocket::serde::Deserialize;
 ///
 /// This is deserialized from JSON data submitted with the POST request.
 /// An example is given below with some sections omitted. For heart rate data (`hr_data`), see
-/// [`HR_Data`]
-/// ```json
+/// [`HR_Data`] ```json
 /// {
 /// 	"user_id": "UID",
 /// 	"time_start": 1669980122,

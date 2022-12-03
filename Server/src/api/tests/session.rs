@@ -1,10 +1,11 @@
 //! Session tests
 use json::object;
-use rocket::http::{Cookie, Status};
-use rocket::local::blocking::Client;
+use rocket::{
+	http::{Cookie, Status},
+	local::blocking::Client,
+};
 
-use crate::conf::API_KEY;
-use crate::launch;
+use crate::{conf::API_KEY, launch};
 
 /// Submitting sample data. Expecting 200
 #[test]
