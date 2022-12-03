@@ -1,9 +1,1 @@
-<?xml version="1.0" encoding="UTF-8" ?>
-<!DOCTYPE user SYSTEM "../dtds/user.dtd">
-<user>
-    <name>Test user</name>
-    <session_data>
-        <session_total>1</session_total>
-    </session_data>
-    <pdata></pdata>
-</user>
+<?xml version="1.0" encoding="UTF-8" ?><!DOCTYPE user SYSTEM "../dtds/user.dtd"><user><name>Test user</name><session_data></session_data><pdata></pdata></user>

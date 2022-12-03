@@ -16,7 +16,7 @@ fn new() {
 		.cookie(Cookie::new("key", API_KEY))
 		.body(
 			object! {
-				"uname": "sample 2",
+				"uname": "test2",
 				"pin": 1234
 			}
 			.to_string(),
@@ -58,7 +58,7 @@ mod body {
 			.cookie(Cookie::new("key", API_KEY))
 			.body(
 				object! {
-					"uname": "sample 2",
+					"uname": "test2",
 				}
 				.to_string(),
 			)
@@ -92,7 +92,7 @@ mod api_key {
 			.cookie(Cookie::new("key", ""))
 			.body(
 				object! {
-					"uname": "sample 2",
+					"uname": "test2",
 					"pin": 1234
 				}
 				.to_string(),
@@ -109,7 +109,7 @@ mod api_key {
 			.post(uri!("/api/new"))
 			.body(
 				object! {
-					"uname": "sample 2",
+					"uname": "test2",
 					"pin": 1234
 				}
 				.to_string(),
