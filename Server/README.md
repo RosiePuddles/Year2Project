@@ -5,12 +5,9 @@ This directory includes the server code. The server runs on Rust using Actix v4 
 ## Running
 
 To run the server you need to specify some environment variables:
-- `SERVER_ADDR`: 
-- `PG.USER`: 
-- `PG.PASSWORD`: 
-- `PG.HOST`: 
-- `PG.PORT`: 
-- `PG.DBNAME`: 
+- `PG.PASSWORD`: Postgres database password for `postgres` user
+- `PG.HOST`: Postgres server address
+- `PG.DBNAME`: Postgres server database to use
 - `API_KEY`: Key to allow access to the API
 
 These should be declared in the `.env` file in the project root.
