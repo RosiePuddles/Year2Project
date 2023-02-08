@@ -2,7 +2,7 @@
 name: Internal Server Error
 about: Report an internal server error
 title: "[SERVER] "
-labels: bug
+labels: bug, server
 assignees: RosiePuddles
 
 ---
