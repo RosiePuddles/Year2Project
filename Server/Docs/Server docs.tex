@@ -1,0 +1,229 @@
+\documentclass{../../Reports/custom}
+\usepackage{hyperref}
+\usepackage{multirow}
+\usepackage{makecell}
+\usepackage{multicol}
+\usepackage{xcolor}
+\usepackage{listings}
+\usepackage{tikz}
+\usepackage{pgf-umlcd}
+
+\Title{Server Documentation}
+\author{Rosie Bartlett}
+
+\colorlet{punct}{red!60!black}
+\definecolor{background}{HTML}{EEEEEE}
+\definecolor{OrangeRed}{RGB}{255,131,0}
+\definecolor{delim}{RGB}{20,105,176}
+\colorlet{numb}{magenta!60!black}
+
+\lstdefinelanguage{json}{
+    basicstyle=\normalfont\ttfamily,
+    numbers=none,
+    numberstyle=\scriptsize,
+    stepnumber=1,
+    numbersep=8pt,
+    showstringspaces=false,
+    breaklines=true,
+    literate=
+     *{0}{{{\color{numb}0}}}{1}
+      {1}{{{\color{numb}1}}}{1}
+      {2}{{{\color{numb}2}}}{1}
+      {3}{{{\color{numb}3}}}{1}
+      {4}{{{\color{numb}4}}}{1}
+      {5}{{{\color{numb}5}}}{1}
+      {6}{{{\color{numb}6}}}{1}
+      {7}{{{\color{numb}7}}}{1}
+      {8}{{{\color{numb}8}}}{1}
+      {9}{{{\color{numb}9}}}{1}
+      {:}{{{\color{punct}{:}}}}{1}
+      {,}{{{\color{punct}{,}}}}{1}
+      {\{}{{{\color{delim}{\{}}}}{1}
+      {\}}{{{\color{delim}{\}}}}}{1}
+      {[}{{{\color{delim}{[}}}}{1}
+      {]}{{{\color{delim}{]}}}}{1},
+}
+\lstset{numbers=none}
+
+\begin{document}
+\maketitle
+
+\section*{Introduction}
+This document will outline the server used to store user data. This is not internal documentation, but a more general overview of database design and public API for use as reference.
+
+\subsection*{Overview}
+
+The server is split in two parts:
+\begin{itemize}
+	\item API call handler
+	\item Database storage
+\end{itemize}
+
+These will each be handled separately with references made in the former to the latter.
+
+\setcounter{tocdepth}{2}
+\tableofcontents
+
+\newpage
+
+\section{API Call Handler}
+
+The API call handler is written in Rust using the \href{https://actix.rs/}{Actix} crate. Database interaction is handed with \href{https://crates.io/crates/tokio-postgres}{\texttt{tokio-postgres}} and \href{https://crates.io/crates/deadpool-postgres}{\texttt{deadpool-postgres}} used for database interaction.
+
+At the moment this only handles API requests but can be expanded to include a simple frontend to allow for downloading relevant data with user validation.
+
+\begin{table}[h]
+	\centering
+	\begin{tabular}{|l|l|l|p{7cm}|}
+	\hline
+		\textbf{Crate} & \textbf{Version} & \textbf{Features} & \textbf{Usage} \\\Xhline{3\arrayrulewidth}
+		\href{https://crates.io/crates/actix-web}{\texttt{actix-web}} & 4 & Default & Web request handling \\\hline
+		\href{https://crates.io/crates/futures-util}{\texttt{futures-util}} & 0.3.26 & Default & Logger trait requirements \\\hline
+		\href{https://crates.io/crates/chrono}{\texttt{chrono}} & 0.4.23 & \texttt{serde} & Datetime handling \\\hline
+		\href{https://crates.io/crates/serde}{\texttt{serde}} & 1.0.152 & \texttt{derive} & Serialising and deserialising structs into and out of JSON \\\hline
+		\href{https://crates.io/crates/dotenv}{\texttt{dotenv}} & 0.15.0 & Default & Adding variables specified in a \texttt{.env} file at run time to the environment variables \\\hline
+		\href{https://crates.io/crates/config}{\texttt{config}} & 0.13.1 & Default & Database configuration \\\hline
+		\href{https://crates.io/crates/deadpool-postgres}{\texttt{deadpool-postgres}} & 0.10.2 & \texttt{serde} & \multirow{4}{*}{Database interations} \\\cline{0-2}
+		\href{https://crates.io/crates/tokio-pg-mapper}{\texttt{tokio-pg-mapper}} & 0.2.0 & Default &  \\\cline{0-2}
+		\href{https://crates.io/crates/tokio-pg-mapper-derive}{\texttt{tokio-pg-mapper-derive}} & 0.2.0 & Default &  \\\cline{0-2}
+		\href{https://crates.io/crates/tokio-postgres}{\texttt{tokio-postgres}} & 0.7.6 & Default &  \\\hline
+	\end{tabular}
+	\caption{API call handler dependencies}
+\end{table}
+
+\subsection{API methods}
+
+The following gives the public API paths with the general form:
+\begin{enumerate}
+	\item Description of the request
+	\item Request information and response codes
+	\item Expected request data
+	\item Successful response data format
+\end{enumerate}
+
+All API paths require the \texttt{API\_KEY} cookie to be set with the correct API key. All data should be sent as valid JSON not JSON5 sorry. Any data in JSON5 will not be able to be serialised and result in an unprocessable entity (422) response from the API call.
+
+Bug reports should be submitted to the \href{https://github.com/RosiePuddles/Year2Project/issues}{GitHub repository}.
+
+\subsubsection{Adding a new user}
+
+Add a new user to the database. User will be assigned a unique user ID (UUID) by the server upon a successful request.
+
+\begin{multicols}{2}
+
+\begin{center}
+	\begin{tabular}{|p{0.4\linewidth}|p{0.4\linewidth}|}
+	\hline
+		\textbf{Request type} & POST \\\hline
+		\textbf{Path} & \texttt{/api/new} \\\hline
+	\end{tabular}
+\end{center}
+\columnbreak
+
+\begin{center}
+	\begin{tabular}{|p{0.225\linewidth}|p{0.575\linewidth}|}
+	\hline
+		\textbf{Response} & \textbf{Reason} \\\Xhline{3\arrayrulewidth}
+		200 & User added to database \\\hline
+		403 & Missing or incorrect API key \\\hline
+		409 & Username already exists \\\hline
+		422 & Request body cannot be serialised \\\hline
+		500 & Internal server error. Please submit a bug report \\\hline
+	\end{tabular}
+\end{center}
+	
+\end{multicols}
+
+Expected data format:
+
+\begin{lstlisting}[language=json]
+{ "uname": "usename" }
+\end{lstlisting}
+
+Usernames are stored as a \lstinline[language=sql]{varchar[30]} so will be truncated to 30 characters. For more detail see \cref{ssec:dtypes-and-sec}.
+
+Successful returned data format:
+
+\begin{lstlisting}[language=json]
+{ "uname": "stored username", "uuid": "integer UUID" }
+\end{lstlisting}
+
+\subsubsection{Submitting session data}
+
+Submit session data for a given user.
+
+\begin{multicols}{2}
+
+\begin{center}
+	\begin{tabular}{|p{0.4\linewidth}|p{0.4\linewidth}|}
+	\hline
+		\textbf{Request type} & POST \\\hline
+		\textbf{Path} & \texttt{/api/submit} \\\hline
+	\end{tabular}
+\end{center}
+\columnbreak
+
+\begin{center}
+	\begin{tabular}{|p{0.225\linewidth}|p{0.575\linewidth}|}
+	\hline
+		\textbf{Response} & \textbf{Reason} \\\Xhline{3\arrayrulewidth}
+		200 & Session recorded \\\hline
+		403 & Missing or incorrect API key \\\hline
+		410 & UUID does not exist or has been removed \\\hline
+		422 & Request body cannot be serialised \\\hline
+		500 & Internal server error. Please submit a bug report \\\hline
+	\end{tabular}
+\end{center}
+	
+\end{multicols}
+
+Expected data format: % todo: add session data
+
+\begin{lstlisting}[language=json]
+{
+  "uuid": "integer UUID",
+  "time": "start time in RFC 3339 format"
+}
+\end{lstlisting}
+
+No data is returned from this path
+
+\section{Database}
+
+The server uses a PostgreSQL 13 database with the following schema
+
+\begin{center}
+\begin{tikzpicture}
+	\begin{class}[text width=5cm]{user}{0,0}
+		\attribute{uname : varchar[30]}
+		\attribute{id : int primary key}
+	\end{class}
+	\begin{class}[text width=7cm]{session}{8,0}
+		\attribute{id : int}
+		\attribute{datetime : timestamp with time zone}
+	\end{class}
+	\association{session}{}{0..*}{user}{}{1..1}
+\end{tikzpicture}
+\end{center}
+
+The tables are generated with the following
+
+\begin{lstlisting}[language=sql]
+CREATE TABLE users (
+    uname   varchar(30) unique,
+    id      int primary key CHECK ( id >= 0 )
+);
+CREATE TABLE data (
+    time_start  timestamp with time zone,
+    id  	    int REFERENCES users,
+);	
+\end{lstlisting}
+
+\subsection{A note on data types and security}
+\label{ssec:dtypes-and-sec}
+
+The type used to store usernames is a \lstinline[language=sql]{varchar(30)} meaning 30 characters at most. This means that assigning a username with more than 30 characters will result in a truncated username being stored which, if not properly handled in a frontend could result in user account collisions; that is allowing different usernames to be treated as the same because the truncated versions are the same.
+
+A character in a PostgreeSQL database is any valid UTF-8 character. Anything outside of this will result in unexpected behaviour and will result in a 422 response.
+
+\end{document}
