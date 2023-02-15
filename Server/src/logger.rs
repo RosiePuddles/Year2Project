@@ -10,7 +10,7 @@ use actix_web::{
 	body::EitherBody,
 	dev::{Service, ServiceRequest, ServiceResponse, Transform},
 	http::Method,
-	web, Error, HttpResponse,
+	web, Error
 };
 use chrono::Local;
 use futures_util::future::LocalBoxFuture;
@@ -63,6 +63,7 @@ where
 			println!("Unable to write to log file! {}", e)
 		}
 
+		#[cfg(not(debug_assertions))]
 		if path.starts_with("/api/")
 			&& req_inner.cookie("API_KEY").map(|c| c.to_string())
 				!= Some(env!("API_KEY", "No API key given!").to_string())
@@ -123,14 +124,6 @@ impl<'a> Logger<'a> {
 		Self {
 			f: Cell::new(f),
 			fmt: "%+",
-			print,
-		}
-	}
-
-	pub fn new(f: File, fmt: &'a str, print: bool) -> Self {
-		Self {
-			f: Cell::new(f),
-			fmt,
 			print,
 		}
 	}

@@ -14,9 +14,13 @@ These should be declared in the `.env` file in the project root.
 
 Run with `cargo run --release`
 
+### Debug mode
+
+The server is considered unsafe when run in debug mode. When in debug mode the server does not require an API key for use with the API and building will not fail when the API key is not specified.
+
 ## Log file
 
-The server will generate a log file. The path for this is specified in [`src/main.rs`](src/main_). Each line of the log file has the following format
+The server will generate a log file. The path for this is specified in [`src/main.rs`](src/main.rs). Each line of the log file has the following format
 
 ```
 [datetime] REQUEST client method path

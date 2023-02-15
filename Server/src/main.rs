@@ -3,7 +3,7 @@ mod config;
 mod logger;
 
 use ::config::{Config, Environment};
-use actix_web::{web, App};
+use actix_web::{web, App, HttpServer};
 use dotenv::dotenv;
 use tokio_postgres::NoTls;
 

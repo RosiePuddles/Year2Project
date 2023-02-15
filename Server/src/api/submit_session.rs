@@ -1,59 +1,64 @@
-use std::fmt::{Display, Formatter};
-
-use actix_web::{web, Error, HttpResponse, ResponseError, post};
-use deadpool_postgres::{Client, Pool, PoolError};
-use serde::{Deserialize, Serialize};
-use tokio_pg_mapper::{Error as PGMError, FromTokioPostgresRow};
-use tokio_pg_mapper_derive::PostgresMapper;
-use tokio_postgres::error::Error as PGError;
-use tokio_postgres::{Row, ToStatement};
+use actix_web::{web, Error, HttpResponse, post};
+use chrono::{DateTime, Local};
+use deadpool_postgres::{Client, GenericClient, Pool};
 use crate::api::db::MyError;
+use crate::api::prelude::submitted::Session;
 
 use crate::logger::Logger;
 
+/// Wrapper around a logger call that prints to stdout if the logger returns an error
 macro_rules! logger_wrap {
     ($t: expr) => {if let Err(e) = $t { println!("Unable to write to log file! {}", e) }};
 }
 
-#[derive(Deserialize, PostgresMapper, Serialize)]
-#[pg_mapper(table = "users")]
-pub struct Session {
-	pub id: i32,
-}
-
-pub async fn db_add_user(client: &Client, session_info: Session, logger: &web::Data<Logger<'_>>) -> Result<(), MyError> {
-	let stmt = client.prepare(&include_str!("../../sql/new_session.sql")).await.unwrap();
+pub async fn db_add_user(client: &Client, session: Session, logger: &web::Data<Logger<'_>>) -> Result<(), MyError> {
+	macro_rules! get_wrapper {
+		($t: expr) => {match $t {
+			Ok(t) => t,
+			Err(e) => {
+				logger_wrap!(logger.error(format!("{}:{} {:?}", file!(), line!(), e.to_string())));
+				return Err(MyError::ServerError)
+			}
+		}};
+	}
+	// check for existing key and get UUID and end_time
+	let stmt = client.prepare(&include_str!("../../sql/submit_session_check.sql")).await.unwrap();
 	
-	let rows = match client.query(&stmt, &[&user_info.uname, &user_info.id]).await {
-		Ok(rows) => rows,
+	let (uuid, end_time) = match client.query(&stmt, &[&session.key]).await {
+		Ok(mut rows) => {
+			if let Some(row) = rows.pop() {
+				// don't need to check for multiple rows because uname is unique
+				(get_wrapper!(row.try_get::<_, i32>(0)), get_wrapper!(row.try_get::<_, DateTime<Local>>(1)))
+			} else {
+				logger_wrap!(logger.info(format!("{}:{} Session submit with unknown key {}", file!(), line!(), session.key)));
+				return Err(MyError::Gone)
+			}
+		},
 		Err(e) => {
 			logger_wrap!(logger.error(format!("{}:{} {:?}", file!(), line!(), e.to_string())));
 			return Err(MyError::ServerError)
 		}
 	};
-	let row = match rows.len() {
-		0 => {
-			logger_wrap!(logger.error(format!("{}:{} db_add_user expected one row returned from the query. Got 0", file!(), line!())));
-			return Err(MyError::ServerError)
-		}
-		1 => rows.first().unwrap().clone(),
-		t => {
-			logger_wrap!(logger.warn(format!("{}:{} db_add_user expected one row returned from the query. Got {}", file!(), line!(), t)));
-			rows.first().unwrap().clone()
-		}
-	};
+	
+	if end_time < Local::now() {
+		logger_wrap!(logger.info(format!(
+			"{}:{} Submit session with out of date key {} {}",
+			file!(), line!(), session.key, end_time.format("%+")
+		)));
+		return Err(MyError::OutOfDate)
+	}
+	
+	let session = session.into_row(uuid);
+	let stmt = client.prepare(&include_str!("../../sql/submit_session.sql")).await.unwrap();
+	if let Err(e) = client.query(
+		&stmt,
+		&[&session.uuid, &session.time, &session.hr, &session.gaze]
+	).await {
+		logger_wrap!(logger.error(format!("{}:{} {:?}", file!(), line!(), e.to_string())));
+		return Err(MyError::ServerError)
+	}
 	
 	Ok(())
-}
-
-impl ResponseError for MyError {
-	fn error_response(&self) -> HttpResponse {
-		match *self {
-			MyError::NotFound => HttpResponse::NotFound().finish(),
-			MyError::PoolError(ref err) => HttpResponse::InternalServerError().body(err.to_string()),
-			_ => HttpResponse::InternalServerError().finish(),
-		}
-	}
 }
 
 #[post("/api/submit")]

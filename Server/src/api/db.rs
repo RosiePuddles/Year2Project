@@ -1,4 +1,5 @@
 use std::fmt::{Display, Formatter};
+use actix_web::{HttpResponse, ResponseError};
 use deadpool_postgres::PoolError;
 use serde::Deserialize;
 use tokio_pg_mapper::Error as PGMError;
@@ -6,11 +7,25 @@ use tokio_postgres::error::Error as PGError;
 
 #[derive(Debug)]
 pub enum MyError {
-	NotFound,
 	ServerError,
+	Conflict,
+	Gone,
+	OutOfDate,
 	PGError(PGError),
 	PGMError(PGMError),
 	PoolError(PoolError),
+}
+
+impl ResponseError for MyError {
+	fn error_response(&self) -> HttpResponse {
+		match *self {
+			MyError::PoolError(ref err) => HttpResponse::InternalServerError().body(err.to_string()),
+			MyError::Conflict => HttpResponse::Conflict().finish(),
+			MyError::Gone => HttpResponse::Gone().finish(),
+			MyError::OutOfDate => HttpResponse::Unauthorized().finish(),
+			_ => HttpResponse::InternalServerError().finish(),
+		}
+	}
 }
 
 #[derive(Debug, Default, Deserialize)]

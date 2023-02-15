@@ -1,4 +1,0 @@
-<!ELEMENT user (name, session_data, pdata)>
-<!ELEMENT name (#PCDATA)>
-<!ELEMENT session_data ()>
-<!ELEMENT pdata ()>

@@ -1,10 +1,15 @@
 CREATE TABLE users (
     uname   varchar(30) unique,
-    id      int primary key CHECK ( id >= 0 )
+    uuid    serial primary key
 );
-CREATE TABLE data (
-    hr          int[],
-    gaze        point[],
+CREATE TABLE sessions (
+    uuid        int REFERENCES users(uuid),
     time_start  timestamp with time zone,
-    user_id     int REFERENCES users
+    hr          int[],
+    gaze        point[]
+);
+CREATE TABLE keys (
+    key         char(16) unique,
+    uuid        int REFERENCES users(uuid),
+    end_time    timestamp with time zone
 );
