@@ -49,6 +49,6 @@ public class Rot : MonoBehaviour
         // Color newCol = Color.HSVToRGB(h + Brightness1.Evaluate(Time.time * 2 + 5f) / 20f, s, v + (Mathf.Sin(Time.time) + 1f) / 10f);
         // newCol.a = 0.21f - (Mathf.Sin(Time.time * 2 + 5f) + 1f) / 15f;
         // skybox.SetColor(colIDs[0], newCol);
-        transform.Rotate(0f, speed * Time.deltaTime, 0f);
+        // transform.Rotate(0f, speed * Time.deltaTime, 0f);
     }
 }
