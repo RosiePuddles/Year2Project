@@ -10,7 +10,7 @@ use actix_web::{
 	body::EitherBody,
 	dev::{Service, ServiceRequest, ServiceResponse, Transform},
 	http::Method,
-	web, Error
+	web, Error,
 };
 use chrono::Local;
 use futures_util::future::LocalBoxFuture;

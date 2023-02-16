@@ -9,7 +9,7 @@ CREATE TABLE sessions (
     gaze        point[]
 );
 CREATE TABLE keys (
-    key         char(16) unique,
+    key         char(512) unique,
     uuid        int REFERENCES users(uuid),
     end_time    timestamp with time zone
 );

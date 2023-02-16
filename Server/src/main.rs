@@ -1,5 +1,4 @@
 mod api;
-mod config;
 mod logger;
 
 use ::config::{Config, Environment};
@@ -13,7 +12,7 @@ async fn main() -> std::io::Result<()> {
 
 	let config_ = Config::builder().add_source(Environment::default()).build().unwrap();
 
-	let config: api::db::ExampleConfig = config_.try_deserialize().unwrap();
+	let config: api::DbConfig = config_.try_deserialize().unwrap();
 
 	let pool = config.pg.create_pool(None, NoTls).unwrap();
 	let log_file = std::fs::OpenOptions::new()
