@@ -6,14 +6,12 @@ use std::{
 	io::Write,
 };
 
-use actix_web::{
-	body::EitherBody,
-	dev::{Service, ServiceRequest, ServiceResponse, Transform},
-	http::Method,
-	web, Error,
-};
+use actix_web::{body::EitherBody, dev::{Service, ServiceRequest, ServiceResponse, Transform}, http::Method, web, Error, HttpMessage};
+use actix_web::dev::Payload;
+use actix_web::web::BytesMut;
 use chrono::Local;
 use futures_util::future::LocalBoxFuture;
+use futures_util::{Stream, StreamExt, TryFutureExt, TryStreamExt};
 
 pub struct LoggerMiddleware;
 
@@ -52,14 +50,14 @@ where
 		self.0.poll_ready(cx).map_err(core::convert::Into::into)
 	}
 
-	fn call(&self, req: ServiceRequest) -> Self::Future {
+	fn call(&self, mut req: ServiceRequest) -> Self::Future {
 		let req_inner = req.request();
 		let logger = req_inner.app_data::<web::Data<Logger>>().unwrap();
 		let host = req_inner.connection_info().clone();
 		let host = host.host();
 		let method = req.method().clone();
 		let path = req_inner.path();
-		if let Err(e) = logger.request(host, &method, path) {
+		if let Err(e) = logger.request(host, &method, path, req_inner.content_type()) {
 			println!("Unable to write to log file! {}", e)
 		}
 
@@ -135,13 +133,14 @@ impl<'a> Logger<'a> {
 		Ok(())
 	}
 
-	pub fn request(&self, host: &str, method: &Method, path: &str) -> std::io::Result<()> {
+	pub fn request(&self, host: &str, method: &Method, path: &str, content_type: &str) -> std::io::Result<()> {
 		let printed = format!(
-			"[{} REQ  ] {} {} {}\n",
+			"[{} REQ  ] {} {} {} {}\n",
 			Local::now().format(self.fmt),
 			host,
 			method,
-			path
+			path,
+			content_type
 		);
 		if self.print {
 			print!("{}", printed)
