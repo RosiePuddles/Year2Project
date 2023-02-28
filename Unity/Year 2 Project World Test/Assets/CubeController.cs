@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
+using UnityEditor.PackageManager;
 
 public class CubeController : MonoBehaviour
 {
@@ -47,7 +48,7 @@ public class CubeController : MonoBehaviour
 
         while(time < refreshDuration)
         {
-            heartRateAverages.Add(sensorScript.GetHeartRate());
+            heartRateAverages.Add(HeartRateSensor.GetHeartRate());
             time += Time.deltaTime;
 
             yield return null;
@@ -57,18 +58,26 @@ public class CubeController : MonoBehaviour
         collectingHeartRates = false;
     }
     
+    private float HeartRateSigmoid(int hr, int midpoint=70, int scale=5)
+    { 
+        float x = (hr-midpoint) / scale;
+        float sigmoid = 1 / (1 + Mathf.Exp(-x));
+        return sigmoid;
+    }
 
     IEnumerator UpdateCube()
     {
         changingColour = true;
         Debug.Log(Time.deltaTime + " HR Average:" + averageHeartRate);
-        float heartRateNorm = (float)averageHeartRate / 150;
+        //float heartRateNorm = (float)averageHeartRate / 100;
+        float heartRateScaled = HeartRateSigmoid(averageHeartRate);
+        //heartRateNorm *= 2.5f;
         // Debug.Log("HR NORm " + heartRateNorm);
 
         Color oldColour = cubeRenderer.material.color;
 
         // at the moment this will just make it vary between black (low HR's) and white (high HR's)
-        Color newColor = new Color(heartRateNorm, heartRateNorm, heartRateNorm);
+        Color newColor = new Color(heartRateScaled, heartRateScaled, heartRateScaled);
         
         float time = 0f;
 
