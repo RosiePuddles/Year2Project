@@ -2,26 +2,23 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
-using UnityEditor.PackageManager;
 
 public class CubeController : MonoBehaviour
 {
     private Renderer cubeRenderer;
-    private SensorData sensorScript;
-    [SerializeField]
-    private float refreshDuration = 3f;
-    private int averageHeartRate = 0;
+    [SerializeField] private float refreshDuration = 3f;
+    private int averageHeartRate;
 
-    private bool changingColour = false;
-    private bool collectingHeartRates = false;
+    private bool changingColour;
+    private bool collectingHeartRates;
 
-    private List<int> heartRateAverages = new List<int>();
+    private List<int> heartRateAverages = new();
 
     void Start()
     {
         cubeRenderer = gameObject.GetComponent<Renderer>();
     }
-    
+
     void Update()
     {
         // only start a coroutine if it has finished from last time
@@ -29,11 +26,11 @@ public class CubeController : MonoBehaviour
         {
             StartCoroutine(AverageHeartRate());
         }
+
         if (!changingColour)
         {
             StartCoroutine(UpdateCube());
         }
-
     }
 
     IEnumerator AverageHeartRate()
@@ -43,7 +40,7 @@ public class CubeController : MonoBehaviour
 
         heartRateAverages.Clear();
 
-        while(time < refreshDuration)
+        while (time < refreshDuration)
         {
             heartRateAverages.Add(HeartRateSensor.GetHeartRate());
             time += Time.deltaTime;
@@ -54,10 +51,10 @@ public class CubeController : MonoBehaviour
         averageHeartRate = Mathf.RoundToInt((float)heartRateAverages.Average());
         collectingHeartRates = false;
     }
-    
-    private float HeartRateSigmoid(int hr, int midpoint=70, int scale=5)
-    { 
-        float x = (hr-midpoint) / scale;
+
+    private float HeartRateSigmoid(int hr, int midpoint = 70, int scale = 5)
+    {
+        float x = (hr - midpoint) / scale;
         float sigmoid = 1 / (1 + Mathf.Exp(-x));
         return sigmoid;
     }
@@ -75,7 +72,7 @@ public class CubeController : MonoBehaviour
 
         // at the moment this will just make it vary between black (low HR's) and white (high HR's)
         Color newColor = new Color(heartRateScaled, heartRateScaled, heartRateScaled);
-        
+
         float time = 0f;
 
         while (time < refreshDuration)
@@ -87,6 +84,7 @@ public class CubeController : MonoBehaviour
 
             yield return null;
         }
+
         cubeRenderer.material.color = newColor;
         changingColour = false;
 

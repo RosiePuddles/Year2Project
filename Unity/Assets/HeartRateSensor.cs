@@ -1,14 +1,9 @@
 ﻿using System;
-using System.Collections;
-using System.Collections.Generic;
 using System.Net.Sockets;
-using System.Net;
 using System.Text;
 using UnityEngine;
 using System.Threading.Tasks;
-using UnityEditor.Networking.PlayerConnection;
 using System.Threading;
-using Unity.VisualScripting;
 
 // Credit to
 // https://gist.github.com/danielbierwirth/0636650b005834204cb19ef5ae6ccedb
@@ -25,6 +20,7 @@ class HeartRateSensor : MonoBehaviour
     {
         ConnectToTcpServer();
     }
+
     // Update is called once per frame
     void Update()
     {
@@ -33,6 +29,7 @@ class HeartRateSensor : MonoBehaviour
             SendMessage();
         }
     }
+
     /// <summary> 	
     /// Setup socket connection. 	
     /// </summary> 	
@@ -49,21 +46,18 @@ class HeartRateSensor : MonoBehaviour
             Debug.Log("On client connect exception " + e);
         }
     }
+
     /// <summary> 	
     /// Runs in background clientReceiveThread; Listens for incomming data. 	
     /// </summary>
-
     private void OnDestroy()
     {
-
         cancellationTokenSource.Cancel();
         listenTask.Wait();
         socketConnection.Close();
         socketConnection.Dispose();
-
-
-
     }
+
     private void ListenForData(CancellationToken cancellationToken)
     {
         try
@@ -99,7 +93,6 @@ class HeartRateSensor : MonoBehaviour
                         {
                             return;
                         }
-
                     }
                 }
             }
@@ -109,6 +102,7 @@ class HeartRateSensor : MonoBehaviour
             Debug.Log("Socket exception: " + socketException);
         }
     }
+
     /// <summary> 	
     /// Send message to server using socket connection. 	
     /// </summary> 	
@@ -118,6 +112,7 @@ class HeartRateSensor : MonoBehaviour
         {
             return;
         }
+
         try
         {
             // Get a stream object for writing. 			
@@ -144,5 +139,3 @@ class HeartRateSensor : MonoBehaviour
         return HeartRate;
     }
 }
-
-

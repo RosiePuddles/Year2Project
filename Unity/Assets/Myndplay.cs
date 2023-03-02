@@ -1,14 +1,9 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
 using System.Net.Sockets;
-using System.Net;
 using System.Text;
 using UnityEngine;
 using System.Threading.Tasks;
-using UnityEditor.Networking.PlayerConnection;
 using System.Threading;
-using Unity.VisualScripting;
 
 public class Myndplay : MonoBehaviour
 {
@@ -17,6 +12,7 @@ public class Myndplay : MonoBehaviour
     private CancellationTokenSource cancellationTokenSource;
 
     private static int meditationValue;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -31,6 +27,7 @@ public class Myndplay : MonoBehaviour
             SendMessage();
         }
     }
+
     private void ConnectToTcpServer()
     {
         try
@@ -44,15 +41,15 @@ public class Myndplay : MonoBehaviour
             Debug.Log("On client connect exception " + e);
         }
     }
+
     private void OnDestroy()
     {
-
         cancellationTokenSource.Cancel();
         listenTask.Wait();
         socketConnection.Close();
         socketConnection.Dispose();
-
     }
+
     private void ListenForData(CancellationToken cancellationToken)
     {
         try
@@ -88,7 +85,6 @@ public class Myndplay : MonoBehaviour
                         {
                             return;
                         }
-
                     }
                 }
             }
@@ -98,12 +94,14 @@ public class Myndplay : MonoBehaviour
             Debug.Log("Socket exception: " + socketException);
         }
     }
+
     private void SendMessage()
     {
         if (socketConnection == null)
         {
             return;
         }
+
         try
         {
             // Get a stream object for writing. 			
@@ -130,4 +128,3 @@ public class Myndplay : MonoBehaviour
         return meditationValue;
     }
 }
-

@@ -1,20 +1,14 @@
-using Unity.VisualScripting;
 using UnityEngine;
 
 public class Rot : MonoBehaviour
 {
-    public float speed;
-    [Header("Colour 1")]
-    public Color Colour1;
+    [Header("Colour 1")] public Color Colour1;
     public AnimationCurve Brightness1;
-    [Header("Colour 2")]
-    public Color Colour2;
+    [Header("Colour 2")] public Color Colour2;
     public AnimationCurve Brightness2;
-    [Header("Colour 3")]
-    public Color Colour3;
+    [Header("Colour 3")] public Color Colour3;
     public AnimationCurve Brightness3;
-    [Header("Colour 4")]
-    public Color Colour4;
+    [Header("Colour 4")] public Color Colour4;
     public AnimationCurve Brightness4;
     private Material skybox;
     private int[] colIDs;
@@ -23,7 +17,11 @@ public class Rot : MonoBehaviour
     private void Start()
     {
         skybox = GetComponent<Skybox>().material;
-        colIDs = new[] { Shader.PropertyToID("_Colour_1"), Shader.PropertyToID("_Colour_2"), Shader.PropertyToID("_Colour_3"), Shader.PropertyToID("_Colour_4") };
+        colIDs = new[]
+        {
+            Shader.PropertyToID("_Colour_1"), Shader.PropertyToID("_Colour_2"), Shader.PropertyToID("_Colour_3"),
+            Shader.PropertyToID("_Colour_4")
+        };
         alphas = new[] { Colour1.a, Colour2.a, Colour3.a, Colour4.a };
     }
 
