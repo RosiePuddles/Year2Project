@@ -6,8 +6,6 @@ using UnityEditor.PackageManager;
 
 public class CubeController : MonoBehaviour
 {
-    public GameObject Sensor;
-
     private Renderer cubeRenderer;
     private SensorData sensorScript;
     [SerializeField]
@@ -21,7 +19,6 @@ public class CubeController : MonoBehaviour
 
     void Start()
     {
-        sensorScript = Sensor.GetComponent<SensorData>();
         cubeRenderer = gameObject.GetComponent<Renderer>();
     }
     
