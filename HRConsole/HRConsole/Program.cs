@@ -44,12 +44,9 @@ namespace HRConsole
 
                 while (client.Connected) //while the client is connected, we look for incoming messages
                 {
+                    Thread.Sleep(200); // send the message every 200 milliseconds
                     try
                     {
-                        Thread.Sleep(200); // send the message every 200 milliseconds
-                        //byte[] msg = new byte[1024];     //the messages arrive as byte array
-                        //ns.Read(msg, 0, msg.Length);   //the same networkstream reads the message sent by the client
-                        // Console.WriteLine(Encoding.Default.GetString(msg));
                         ns.Write(Encoding.ASCII.GetBytes(HR.ToString()), 0, HR.ToString().Length);
                     }
                     catch //exception occur when client disconnects
@@ -59,6 +56,7 @@ namespace HRConsole
                 }
 
                 Console.WriteLine("Client Disconnected");
+                return;
             }
         }
 

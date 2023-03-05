@@ -22,3 +22,15 @@ D:\Documents\Heart\Year2Project\Heart Rate\HRConsole\HRConsole\obj\Debug\HRConso
 D:\Documents\Heart\Year2Project\Heart Rate\HRConsole\HRConsole\obj\Debug\HRConsole.csproj.CopyComplete
 D:\Documents\Heart\Year2Project\Heart Rate\HRConsole\HRConsole\obj\Debug\HRConsole.exe
 D:\Documents\Heart\Year2Project\Heart Rate\HRConsole\HRConsole\obj\Debug\HRConsole.pdb
+D:\Documents\ProperProject2\Year2Project\HRConsole\HRConsole\bin\Debug\HRConsole.exe.config
+D:\Documents\ProperProject2\Year2Project\HRConsole\HRConsole\bin\Debug\HRConsole.exe
+D:\Documents\ProperProject2\Year2Project\HRConsole\HRConsole\bin\Debug\HRConsole.pdb
+D:\Documents\ProperProject2\Year2Project\HRConsole\HRConsole\bin\Debug\System.Runtime.WindowsRuntime.dll
+D:\Documents\ProperProject2\Year2Project\HRConsole\HRConsole\bin\Debug\Windows.winmd
+D:\Documents\ProperProject2\Year2Project\HRConsole\HRConsole\bin\Debug\System.Runtime.WindowsRuntime.xml
+D:\Documents\ProperProject2\Year2Project\HRConsole\HRConsole\obj\Debug\HRConsole.csproj.AssemblyReference.cache
+D:\Documents\ProperProject2\Year2Project\HRConsole\HRConsole\obj\Debug\HRConsole.csproj.SuggestedBindingRedirects.cache
+D:\Documents\ProperProject2\Year2Project\HRConsole\HRConsole\obj\Debug\HRConsole.csproj.CoreCompileInputs.cache
+D:\Documents\ProperProject2\Year2Project\HRConsole\HRConsole\obj\Debug\HRConsole.csproj.CopyComplete
+D:\Documents\ProperProject2\Year2Project\HRConsole\HRConsole\obj\Debug\HRConsole.exe
+D:\Documents\ProperProject2\Year2Project\HRConsole\HRConsole\obj\Debug\HRConsole.pdb

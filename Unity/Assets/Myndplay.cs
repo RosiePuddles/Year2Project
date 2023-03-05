@@ -54,7 +54,7 @@ public class Myndplay : MonoBehaviour
     {
         try
         {
-            socketConnection = new TcpClient("127.0.0.1", 1234);
+            socketConnection = new TcpClient("127.0.0.1", 8080);
             Byte[] bytes = new Byte[4];
             while (true)
             {
@@ -123,7 +123,7 @@ public class Myndplay : MonoBehaviour
     }
 
 
-    public static int GetmeditationValue()
+    public static int GetMeditationValue()
     {
         return meditationValue;
     }

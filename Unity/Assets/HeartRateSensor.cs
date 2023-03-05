@@ -21,18 +21,6 @@ class HeartRateSensor : MonoBehaviour
         ConnectToTcpServer();
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        if (Input.GetKeyDown(KeyCode.Space))
-        {
-            SendMessage();
-        }
-    }
-
-    /// <summary> 	
-    /// Setup socket connection. 	
-    /// </summary> 	
     private void ConnectToTcpServer()
     {
         try
@@ -47,15 +35,9 @@ class HeartRateSensor : MonoBehaviour
         }
     }
 
-    /// <summary> 	
-    /// Runs in background clientReceiveThread; Listens for incomming data. 	
-    /// </summary>
     private void OnDestroy()
     {
         cancellationTokenSource.Cancel();
-        listenTask.Wait();
-        socketConnection.Close();
-        socketConnection.Dispose();
     }
 
     private void ListenForData(CancellationToken cancellationToken)
@@ -79,9 +61,16 @@ class HeartRateSensor : MonoBehaviour
                         string serverMessage = Encoding.ASCII.GetString(incommingData);
                         //Debug.Log("server message received as: " + serverMessage);
 
+                        if (cancellationToken.IsCancellationRequested)
+                        {
+                            socketConnection.Close();
+                            return;
+                        }
+
+
                         if (int.TryParse(serverMessage, out HeartRate))
                         {
-                            //Debug.Log(HeartRate);
+                            Debug.Log(HeartRate);
                         }
                         else
                         {
@@ -89,10 +78,7 @@ class HeartRateSensor : MonoBehaviour
                         }
 
 
-                        if (cancellationToken.IsCancellationRequested)
-                        {
-                            return;
-                        }
+
                     }
                 }
             }

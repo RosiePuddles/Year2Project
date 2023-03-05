@@ -17,8 +17,8 @@ namespace thinkgear_testapp_csharp_64
         static int connectionID = 0;
         static void Tcp()
         {
-            TcpListener server = new TcpListener(IPAddress.Parse("127.0.0.1"), 1234);
-            // we set our IP address as server's address, and we also set the port: 9999
+            TcpListener server = new TcpListener(IPAddress.Parse("127.0.0.1"), 8080);
+
 
             server.Start();  // this will start the server
             while (true)   //we wait for a connection
@@ -33,8 +33,6 @@ namespace thinkgear_testapp_csharp_64
                     try
                     {
                         Thread.Sleep(200); // send the message every 200 milliseconds
-                                           //byte[] msg = new byte[1024];     //the messages arrive as byte array
-                                           //ns.Read(msg, 0, msg.Length);   //the same networkstream reads the message sent by the client
                         meditation = meditationCalc();                   // Console.WriteLine(Encoding.Default.GetString(msg));
                         ns.Write(Encoding.ASCII.GetBytes(meditation.ToString()), 0, meditation.ToString().Length);
                         Console.WriteLine(meditation.ToString());
@@ -73,8 +71,8 @@ namespace thinkgear_testapp_csharp_64
                 
                 /* Set/open stream (raw bytes) log file for connection */
 
-                /* Attempt to connect the connection ID handle to serial port "COM5" */
-                string comPortName = "COM4";
+                // Change this to the outgoing port of the myndplay headband
+                string comPortName = "COM3";
 
                 errCode = NativeThinkgear.TG_Connect(connectionID,
                               comPortName,
