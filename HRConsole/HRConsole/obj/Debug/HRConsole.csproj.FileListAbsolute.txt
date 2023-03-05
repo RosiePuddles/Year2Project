@@ -22,3 +22,12 @@ D:\Documents\Heart\Year2Project\Heart Rate\HRConsole\HRConsole\obj\Debug\HRConso
 D:\Documents\Heart\Year2Project\Heart Rate\HRConsole\HRConsole\obj\Debug\HRConsole.csproj.CopyComplete
 D:\Documents\Heart\Year2Project\Heart Rate\HRConsole\HRConsole\obj\Debug\HRConsole.exe
 D:\Documents\Heart\Year2Project\Heart Rate\HRConsole\HRConsole\obj\Debug\HRConsole.pdb
+C:\Users\callu\OneDrive - Durham University\Uni\L2\Software Engineering\C#\Year2Project\HRConsole\HRConsole\bin\Debug\HRConsole.exe.config
+C:\Users\callu\OneDrive - Durham University\Uni\L2\Software Engineering\C#\Year2Project\HRConsole\HRConsole\bin\Debug\HRConsole.exe
+C:\Users\callu\OneDrive - Durham University\Uni\L2\Software Engineering\C#\Year2Project\HRConsole\HRConsole\bin\Debug\HRConsole.pdb
+C:\Users\callu\OneDrive - Durham University\Uni\L2\Software Engineering\C#\Year2Project\HRConsole\HRConsole\obj\Debug\HRConsole.csproj.AssemblyReference.cache
+C:\Users\callu\OneDrive - Durham University\Uni\L2\Software Engineering\C#\Year2Project\HRConsole\HRConsole\obj\Debug\HRConsole.csproj.SuggestedBindingRedirects.cache
+C:\Users\callu\OneDrive - Durham University\Uni\L2\Software Engineering\C#\Year2Project\HRConsole\HRConsole\obj\Debug\HRConsole.csproj.CoreCompileInputs.cache
+C:\Users\callu\OneDrive - Durham University\Uni\L2\Software Engineering\C#\Year2Project\HRConsole\HRConsole\obj\Debug\HRConsole.csproj.CopyComplete
+C:\Users\callu\OneDrive - Durham University\Uni\L2\Software Engineering\C#\Year2Project\HRConsole\HRConsole\obj\Debug\HRConsole.exe
+C:\Users\callu\OneDrive - Durham University\Uni\L2\Software Engineering\C#\Year2Project\HRConsole\HRConsole\obj\Debug\HRConsole.pdb
