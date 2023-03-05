@@ -14,7 +14,6 @@ public class PauseMenu : MonoBehaviour
     {
         if (Input.GetKeyDown("space"))
         {
-            print("Space Pressed!");
             pause_menu.SetActive(true);
         }
     }
