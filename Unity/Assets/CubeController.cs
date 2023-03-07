@@ -73,6 +73,7 @@ public class CubeController : MonoBehaviour
         transform.position = center + new Vector3(x, y, z);
     }
 
+
     IEnumerator AverageHeartRate()
     {
         collectingHeartRates = true;
@@ -119,7 +120,7 @@ public class CubeController : MonoBehaviour
         return sigmoid;
     }
 
-    private float MeditationExponential(int med, int halfLife=40, float scalar = 3)
+    private float MeditationExponential(int med, int halfLife=50, float scalar = 2)
     {
         float y = scalar * Mathf.Exp((-Mathf.Log(2) / halfLife) * med);
   

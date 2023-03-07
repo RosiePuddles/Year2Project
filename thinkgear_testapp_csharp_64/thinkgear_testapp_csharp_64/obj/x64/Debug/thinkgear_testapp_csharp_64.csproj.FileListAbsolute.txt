@@ -25,3 +25,11 @@ D:\Documents\ProperProject2\Year2Project\thinkgear_testapp_csharp_64\thinkgear_t
 D:\Documents\ProperProject2\Year2Project\thinkgear_testapp_csharp_64\thinkgear_testapp_csharp_64\obj\x64\Debug\thinkgear_testapp_csharp_64.csproj.CoreCompileInputs.cache
 D:\Documents\ProperProject2\Year2Project\thinkgear_testapp_csharp_64\thinkgear_testapp_csharp_64\obj\x64\Debug\thinkgear_testapp_csharp_64.exe
 D:\Documents\ProperProject2\Year2Project\thinkgear_testapp_csharp_64\thinkgear_testapp_csharp_64\obj\x64\Debug\thinkgear_testapp_csharp_64.pdb
+C:\Users\josep\OneDrive\Documents\GOOD VERSION\Year2Project\thinkgear_testapp_csharp_64\thinkgear_testapp_csharp_64\bin\x64\Debug\thinkgear_testapp_csharp_64.exe.config
+C:\Users\josep\OneDrive\Documents\GOOD VERSION\Year2Project\thinkgear_testapp_csharp_64\thinkgear_testapp_csharp_64\bin\x64\Debug\thinkgear_testapp_csharp_64.exe
+C:\Users\josep\OneDrive\Documents\GOOD VERSION\Year2Project\thinkgear_testapp_csharp_64\thinkgear_testapp_csharp_64\bin\x64\Debug\thinkgear_testapp_csharp_64.pdb
+C:\Users\josep\OneDrive\Documents\GOOD VERSION\Year2Project\thinkgear_testapp_csharp_64\thinkgear_testapp_csharp_64\obj\x64\Debug\thinkgear_testapp_csharp_64.csproj.AssemblyReference.cache
+C:\Users\josep\OneDrive\Documents\GOOD VERSION\Year2Project\thinkgear_testapp_csharp_64\thinkgear_testapp_csharp_64\obj\x64\Debug\thinkgear_testapp_csharp_64.csproj.SuggestedBindingRedirects.cache
+C:\Users\josep\OneDrive\Documents\GOOD VERSION\Year2Project\thinkgear_testapp_csharp_64\thinkgear_testapp_csharp_64\obj\x64\Debug\thinkgear_testapp_csharp_64.csproj.CoreCompileInputs.cache
+C:\Users\josep\OneDrive\Documents\GOOD VERSION\Year2Project\thinkgear_testapp_csharp_64\thinkgear_testapp_csharp_64\obj\x64\Debug\thinkgear_testapp_csharp_64.exe
+C:\Users\josep\OneDrive\Documents\GOOD VERSION\Year2Project\thinkgear_testapp_csharp_64\thinkgear_testapp_csharp_64\obj\x64\Debug\thinkgear_testapp_csharp_64.pdb

@@ -19,15 +19,6 @@ public class Myndplay : MonoBehaviour
         ConnectToTcpServer();
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        if (Input.GetKeyDown(KeyCode.Space))
-        {
-            SendMessage();
-        }
-    }
-
     private void ConnectToTcpServer()
     {
         try
@@ -35,6 +26,7 @@ public class Myndplay : MonoBehaviour
             cancellationTokenSource = new CancellationTokenSource();
             var CancellationToken = cancellationTokenSource.Token;
             listenTask = Task.Run(() => ListenForData(CancellationToken));
+        
         }
         catch (Exception e)
         {
@@ -45,84 +37,55 @@ public class Myndplay : MonoBehaviour
     private void OnDestroy()
     {
         cancellationTokenSource.Cancel();
-        listenTask.Wait();
-        socketConnection.Close();
-        socketConnection.Dispose();
     }
 
     private void ListenForData(CancellationToken cancellationToken)
     {
-        try
+        while (true) // constantly try and connect to port 8080
         {
-            socketConnection = new TcpClient("127.0.0.1", 8080);
-            Byte[] bytes = new Byte[4];
-            while (true)
+            try
             {
-                // Get a stream object for reading 				
-                using (NetworkStream stream = socketConnection.GetStream())
+                socketConnection = new TcpClient("127.0.0.1", 8080);
+                Byte[] bytes = new Byte[4];
+                while (true)
                 {
-                    int length;
-                    // Read incomming stream into byte arrary. 					
-                    while ((length = stream.Read(bytes, 0, bytes.Length)) != 0)
+                    // Get a stream object for reading 				
+                    using (NetworkStream stream = socketConnection.GetStream())
                     {
-                        var incommingData = new byte[length];
-                        Array.Copy(bytes, 0, incommingData, 0, length);
-                        // Convert byte array to string message. 						
-                        string serverMessage = Encoding.ASCII.GetString(incommingData);
-                        //Debug.Log("server message received as: " + serverMessage);
-
-                        if (int.TryParse(serverMessage, out meditationValue))
+                        int length;
+                        // Read incomming stream into byte arrary. 					
+                        while ((length = stream.Read(bytes, 0, bytes.Length)) != 0)
                         {
-                            Debug.Log(meditationValue);
-                        }
-                        else
-                        {
-                            Debug.Log("Could not parse");
-                        }
+                            var incommingData = new byte[length];
+                            Array.Copy(bytes, 0, incommingData, 0, length);
+                            // Convert byte array to string message. 						
+                            string serverMessage = Encoding.ASCII.GetString(incommingData);
+
+                            if (int.TryParse(serverMessage, out meditationValue))
+                            {
+                                // Debug.Log("meditation:"meditationValue);
+                            }
+                            else
+                            {
+                                Debug.Log("Could not parse");
+                            }
 
 
-                        if (cancellationToken.IsCancellationRequested)
-                        {
-                            return;
+                            if (cancellationToken.IsCancellationRequested)
+                            {
+                                return;
+                            }
                         }
                     }
                 }
             }
-        }
-        catch (SocketException socketException)
-        {
-            Debug.Log("Socket exception: " + socketException);
-        }
-    }
-
-    private void SendMessage()
-    {
-        if (socketConnection == null)
-        {
-            return;
-        }
-
-        try
-        {
-            // Get a stream object for writing. 			
-            NetworkStream stream = socketConnection.GetStream();
-            if (stream.CanWrite)
+            catch
             {
-                string clientMessage = "This is a message from one of your clients.";
-                // Convert string message to byte array.                 
-                byte[] clientMessageAsByteArray = Encoding.ASCII.GetBytes(clientMessage);
-                // Write byte array to socketConnection stream.                 
-                stream.Write(clientMessageAsByteArray, 0, clientMessageAsByteArray.Length);
-                Debug.Log("Client sent his message - should be received by server");
+                Debug.Log("Socket exception: Cannot find server for Meditation");
             }
         }
-        catch (SocketException socketException)
-        {
-            Debug.Log("Socket exception: " + socketException);
-        }
+
     }
-
-
     public static int GetMeditationValue()
     {
         return meditationValue;

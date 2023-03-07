@@ -18,7 +18,6 @@ namespace HRConsole
     internal class Program
     {
         static DeviceInformation device;
-
         static int HR = 100;
 
         // Bluetooth HR services start with 180d
@@ -28,19 +27,14 @@ namespace HRConsole
         static void Tcp()
         {
             TcpListener server = new TcpListener(IPAddress.Parse("127.0.0.1"), 1234);
-            // we set our IP address as server's address, and we also set the port: 9999
+            // we set our IP address as server's address, and we also set the port: 1234
 
             server.Start(); // this will start the server
             while (true) //we wait for a connection
             {
                 TcpClient client = server.AcceptTcpClient(); //if a connection exists, the server will accept it
-
+                Console.WriteLine("Client Connected");
                 NetworkStream ns = client.GetStream(); //networkstream is used to send/receive messages
-
-                byte[] hello = new byte[4]; //any message must be serialized (converted to byte array)
-                hello = Encoding.Default.GetBytes("hello world"); //conversion string => byte array
-
-                ns.Write(hello, 0, hello.Length); //sending the message
 
                 while (client.Connected) //while the client is connected, we look for incoming messages
                 {
@@ -56,14 +50,21 @@ namespace HRConsole
                 }
 
                 Console.WriteLine("Client Disconnected");
-                return;
             }
         }
 
-        static async Task Main(string[] args)
+        static void Main(string[] args)
         {
-            // Run a new task
-            Task TCP = Task.Run(Tcp);
+            Task TcpTask = new Task(Tcp);
+            var HeartRateTask = HeartRateReadings();
+
+            TcpTask.Start();
+
+            HeartRateTask.Wait();
+        }
+
+        static async Task HeartRateReadings()
+        {
 
             // First we want to detect near by devices
             // Query for extra properties you want returned
@@ -87,91 +88,84 @@ namespace HRConsole
             // Start the watcher.
             deviceWatcher.Start();
 
-
-            while (true)
+            while(device == null)
             {
-                if (device == null)
-                {
-                    Thread.Sleep(200);
-                }
-                else
-                {
-                    Console.WriteLine("Press Any Key To Pair");
-                    Console.ReadKey();
-                    BluetoothLEDevice bluetoothLeDevice = await BluetoothLEDevice.FromIdAsync(device.Id);
-                    Console.WriteLine("Attempting to Pair");
+                Thread.Sleep(200);
+            }
+            deviceWatcher.Stop();
+            Console.WriteLine("\nPress Any Key To Pair");
+            Console.ReadKey();
+            BluetoothLEDevice bluetoothLeDevice = await BluetoothLEDevice.FromIdAsync(device.Id);
+            Console.WriteLine("Attempting to Pair");
 
-                    GattDeviceServicesResult result = await bluetoothLeDevice.GetGattServicesAsync();
+            GattDeviceServicesResult result = await bluetoothLeDevice.GetGattServicesAsync();
 
-                    // Ensures bluetooth can pair
-                    if (result.Status == GattCommunicationStatus.Success)
+            // Ensures bluetooth can pair
+            if (result.Status == GattCommunicationStatus.Success)
+            {
+                Console.WriteLine("Pairing Succesfull");
+                var services = result.Services;
+                foreach (var service in services)
+                {
+                    // Get the correct service (i.e the one that has the HR)
+
+                    if (service.Uuid.ToString().Substring(4, 4) == HEART_RATE_SERVICE_ID)
                     {
-                        Console.WriteLine("Pairing Succesfull");
-                        var services = result.Services;
-                        foreach (var service in services)
+                        Console.WriteLine("Found Heart Rate Service");
+                        GattCharacteristicsResult characteristicsResults =
+                            await service.GetCharacteristicsAsync();
+
+                        if (characteristicsResults.Status == GattCommunicationStatus.Success)
                         {
-                            // Get the correct service (i.e the one that has the HR)
-
-                            if (service.Uuid.ToString().Substring(4, 4) == HEART_RATE_SERVICE_ID)
+                            Thread.Sleep(200);
+                            var characteristics = characteristicsResults.Characteristics;
+                            foreach (var characteristic in characteristics)
                             {
-                                Console.WriteLine("Found Heart Rate Service");
-                                GattCharacteristicsResult characteristicsResults =
-                                    await service.GetCharacteristicsAsync();
+                                GattCharacteristicProperties properties =
+                                    characteristic.CharacteristicProperties;
 
-                                if (characteristicsResults.Status == GattCommunicationStatus.Success)
+
+                                if (properties.HasFlag(GattCharacteristicProperties.Notify))
                                 {
-                                    Thread.Sleep(200);
-                                    var characteristics = characteristicsResults.Characteristics;
-                                    foreach (var characteristic in characteristics)
+                                    Console.WriteLine("Notfiy property found");
+                                    GattCommunicationStatus status =
+                                        await characteristic
+                                            .WriteClientCharacteristicConfigurationDescriptorAsync(
+                                                GattClientCharacteristicConfigurationDescriptorValue.Notify);
+                                    if (status == GattCommunicationStatus.Success)
                                     {
-                                        Console.WriteLine("---------------");
-                                        Console.WriteLine(characteristics);
-
-                                        GattCharacteristicProperties properties =
-                                            characteristic.CharacteristicProperties;
-
-
-                                        if (properties.HasFlag(GattCharacteristicProperties.Notify))
-                                        {
-                                            Console.WriteLine("Notfiy property found");
-                                            GattCommunicationStatus status =
-                                                await characteristic
-                                                    .WriteClientCharacteristicConfigurationDescriptorAsync(
-                                                        GattClientCharacteristicConfigurationDescriptorValue.Notify);
-                                            if (status == GattCommunicationStatus.Success)
-                                            {
-                                                characteristic.ValueChanged += Characteristic_ValueChanged;
-                                                // Server has been informed of clients interest.
-                                            }
-                                        }
+                                        characteristic.ValueChanged += Characteristic_ValueChanged;
+                                        // Server has been informed of clients interest.
                                     }
-                                }
-                                else
-                                {
-                                    Console.WriteLine("Characteristics not detected. Please try again");
                                 }
                             }
                         }
+                        else
+                        {
+                            Console.WriteLine("Characteristics not detected. Please try again");
+                        }
                     }
-                    else
-                    {
-                        Console.WriteLine("unreachable");
-                    }
-
-                    Console.WriteLine("press any key to exit");
-                    Console.ReadKey();
-                    break;
                 }
             }
+            else
+            {
+                Console.WriteLine("device unreachable");
+            }
+
+            Console.WriteLine("\npress any key to exit");
+            Console.ReadKey();
+
         }
 
+        // This method is ran constantly after it is first called in HeartRateReadings, and continues on after
+        // that method closes
         private static void Characteristic_ValueChanged(GattCharacteristic sender, GattValueChangedEventArgs args)
         {
             var reader = DataReader.FromBuffer(args.CharacteristicValue);
             var flags = reader.ReadByte();
             var value = reader.ReadByte();
             HR = value;
-            Console.WriteLine($"{flags} - {value}");
+            Console.WriteLine($"Heart Rate: {value}");
         }
 
         private static void DeviceWatcher_Stopped(DeviceWatcher sender, object args)
@@ -194,6 +188,8 @@ namespace HRConsole
             //throw new NotImplementedException();
         }
 
+        // Ran constantly when deviceWatcher.start() is ran in HeartRateReadings
+        // deviceWatcher.stop() is called after device is no longer null (which occurs, when the Polar H10 is found)
         private static void DeviceWatcher_Added(DeviceWatcher sender, DeviceInformation args)
         {
             string deviceName = args.Name;

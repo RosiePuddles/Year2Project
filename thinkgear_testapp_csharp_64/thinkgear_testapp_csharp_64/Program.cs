@@ -6,10 +6,10 @@ using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace thinkgear_testapp_csharp_64
 {
-    // Start is called before the first frame update
     internal class Program
     {
         static int meditation = 0;
@@ -17,29 +17,27 @@ namespace thinkgear_testapp_csharp_64
         static int connectionID = 0;
         static void Tcp()
         {
+            // Starts server on local host with port 8080
             TcpListener server = new TcpListener(IPAddress.Parse("127.0.0.1"), 8080);
 
 
             server.Start();  // this will start the server
-            while (true)   //we wait for a connection
+            while (true)  
             {
                 TcpClient client = server.AcceptTcpClient();  //if a connection exists, the server will accept it
+                Console.WriteLine("Client Connected");
 
-                NetworkStream ns = client.GetStream(); //networkstream is used to send/receive messages
-                
+                NetworkStream ns = client.GetStream(); // networkstream is used to send/receive messages
 
                 while (client.Connected)  //while the client is connected, we look for incoming messages
                 {
                     try
                     {
                         Thread.Sleep(200); // send the message every 200 milliseconds
-                        meditation = meditationCalc();                   // Console.WriteLine(Encoding.Default.GetString(msg));
                         ns.Write(Encoding.ASCII.GetBytes(meditation.ToString()), 0, meditation.ToString().Length);
-                        Console.WriteLine(meditation.ToString());
                     }
-                    catch //exception occur when client disconnects
+                    catch // exception occur when client disconnects
                     {
-
                         break;
                     }
 
@@ -52,7 +50,6 @@ namespace thinkgear_testapp_csharp_64
             int errCode = 0;
             if (count == 0)
             {
-
                 NativeThinkgear thinkgear = new NativeThinkgear();
 
                 /* Print driver version number */
@@ -72,7 +69,11 @@ namespace thinkgear_testapp_csharp_64
                 /* Set/open stream (raw bytes) log file for connection */
 
                 // Change this to the outgoing port of the myndplay headband
-                string comPortName = "COM3";
+                // This can be found by going to: Bluetooth->More Bluetooth Settings
+                // Then a window will open. Check for the COM port with "Mynband 'Bluetooth Serial Port'
+                // and direction outgoing.
+
+                string comPortName = "COM5";
 
                 errCode = NativeThinkgear.TG_Connect(connectionID,
                               comPortName,
@@ -97,11 +98,7 @@ namespace thinkgear_testapp_csharp_64
                     if (NativeThinkgear.TG_GetValueStatus(connectionID, NativeThinkgear.DataType.TG_DATA_RAW) != 0)
                     {
                         meditation = (int)NativeThinkgear.TG_GetValue(connectionID, NativeThinkgear.DataType.TG_DATA_MEDITATION);
-                        /* Get and print out the updated raw value */
                         return meditation;
-
-
-
                     }
                 }
                 
@@ -117,11 +114,32 @@ namespace thinkgear_testapp_csharp_64
             return meditation;
 
         }
-    
-
+        private static void MyndplayReadings()
+        {
+            while (true)  //while the client is connected, we look for incoming messages
+            {
+                try
+                {
+                    Thread.Sleep(200); //Take a meditation reading every 200ms
+                    meditation = meditationCalc();
+                    Console.WriteLine($"Meditation Value: {meditation}");
+                }
+                catch //exception occur when client disconnects
+                {
+                    break;
+                }
+            }
+        }
         static void Main(string[] args)
         {
-            Tcp();
+            Task TCP = new Task(Tcp);
+            Task Myndplay = new Task(MyndplayReadings);
+
+            TCP.Start();
+            Myndplay.Start();
+
+            Console.ReadKey();
+
         }
     }
 }

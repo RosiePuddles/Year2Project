@@ -42,83 +42,57 @@ class HeartRateSensor : MonoBehaviour
 
     private void ListenForData(CancellationToken cancellationToken)
     {
-        try
+        while(true) // constantly try and connect to port 1234
         {
-            socketConnection = new TcpClient("127.0.0.1", 1234);
-            Byte[] bytes = new Byte[4];
-            while (true)
+            try
             {
-                // Get a stream object for reading 				
-                using (NetworkStream stream = socketConnection.GetStream())
+                socketConnection = new TcpClient("127.0.0.1", 1234);
+                Byte[] bytes = new Byte[4];
+                while (true)
                 {
-                    int length;
-                    // Read incomming stream into byte arrary. 					
-                    while ((length = stream.Read(bytes, 0, bytes.Length)) != 0)
+                    // Get a stream object for reading 				
+                    using (NetworkStream stream = socketConnection.GetStream())
                     {
-                        var incommingData = new byte[length];
-                        Array.Copy(bytes, 0, incommingData, 0, length);
-                        // Convert byte array to string message. 						
-                        string serverMessage = Encoding.ASCII.GetString(incommingData);
-                        //Debug.Log("server message received as: " + serverMessage);
-
-                        if (cancellationToken.IsCancellationRequested)
+                        int length;
+                        // Read incomming stream into byte arrary. 					
+                        while ((length = stream.Read(bytes, 0, bytes.Length)) != 0)
                         {
-                            socketConnection.Close();
-                            return;
+                            var incommingData = new byte[length];
+                            Array.Copy(bytes, 0, incommingData, 0, length);
+                            // Convert byte array to string message. 						
+                            string serverMessage = Encoding.ASCII.GetString(incommingData);
+
+                            if (cancellationToken.IsCancellationRequested)
+                            {
+                                socketConnection.Close();
+                                return;
+                            }
+
+
+                            if (int.TryParse(serverMessage, out HeartRate))
+                            {
+                                // Debug.Log("Heart Rate" + HeartRate);
+                            }
+                            else
+                            {
+                                Debug.Log("Could not parse");
+                            }
+
+
+
                         }
-
-
-                        if (int.TryParse(serverMessage, out HeartRate))
-                        {
-                            Debug.Log(HeartRate);
-                        }
-                        else
-                        {
-                            Debug.Log("Could not parse");
-                        }
-
-
-
                     }
                 }
             }
-        }
-        catch (SocketException socketException)
-        {
-            Debug.Log("Socket exception: " + socketException);
-        }
-    }
-
-    /// <summary> 	
-    /// Send message to server using socket connection. 	
-    /// </summary> 	
-    private void SendMessage()
-    {
-        if (socketConnection == null)
-        {
-            return;
-        }
-
-        try
-        {
-            // Get a stream object for writing. 			
-            NetworkStream stream = socketConnection.GetStream();
-            if (stream.CanWrite)
+            catch
             {
-                string clientMessage = "This is a message from one of your clients.";
-                // Convert string message to byte array.                 
-                byte[] clientMessageAsByteArray = Encoding.ASCII.GetBytes(clientMessage);
-                // Write byte array to socketConnection stream.                 
-                stream.Write(clientMessageAsByteArray, 0, clientMessageAsByteArray.Length);
-                Debug.Log("Client sent his message - should be received by server");
+                Debug.Log("Socket exception: Cannot find server for Heart Rate");
             }
-        }
-        catch (SocketException socketException)
-        {
-            Debug.Log("Socket exception: " + socketException);
-        }
-    }
 
+
+        }
+ 
+    }
 
     public static int GetHeartRate()
     {
