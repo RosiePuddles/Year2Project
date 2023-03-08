@@ -73,7 +73,7 @@ namespace thinkgear_testapp_csharp_64
                 // Then a window will open. Check for the COM port with "Mynband 'Bluetooth Serial Port'
                 // and direction outgoing.
 
-                string comPortName = "COM5";
+                string comPortName = "COM6";
 
                 errCode = NativeThinkgear.TG_Connect(connectionID,
                               comPortName,
@@ -120,7 +120,7 @@ namespace thinkgear_testapp_csharp_64
             {
                 try
                 {
-                    Thread.Sleep(200); //Take a meditation reading every 200ms
+                    Thread.Sleep(1000); //Take a meditation reading every 200ms
                     meditation = meditationCalc();
                     Console.WriteLine($"Meditation Value: {meditation}");
                 }

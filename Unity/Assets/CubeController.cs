@@ -18,24 +18,50 @@ public class CubeController : MonoBehaviour
     private bool collectingHeartRates;
     bool collectingMeditation;
 
-    private List<int> heartRateAverages = new();
-    private List<int> meditationAverages = new();
-
-    void Start()
-    {
-        cubeRenderer = gameObject.GetComponent<Renderer>();
-
-        userTransform = Camera.main.transform;
-        center = userTransform.position;
-    }
-
-
-    public float angularVelocity;
+    [SerializeField]
+    private float angularVelocity;
     public float radius = 10f;
 
     private Transform userTransform;
-    private Vector3 center;
-    private float angle = 0f;
+    private Vector3 centre;
+    private float angle;
+
+
+    private List<int> heartRateAverages = new();
+    private List<int> meditationAverages = new();
+
+    void Awake()
+    {
+        
+        cubeRenderer = gameObject.GetComponent<Renderer>();
+        radius = CubeSpawner.cubeRadius;
+
+
+        userTransform = Camera.main.transform;
+        centre = userTransform.position;
+
+        Vector3 diffVect = transform.position - new Vector3(0, 0, 1);
+
+
+        Debug.Log(gameObject.name + " diff vector " + diffVect);
+        if(diffVect.magnitude != 0)
+        {
+            angle = 2 * Mathf.Asin((diffVect.magnitude)/2);
+        }
+        else
+        {
+            angle = 0;
+        }
+
+        if(diffVect.x < 0)
+        {
+            angle = (2 * Mathf.PI) - angle;
+        }
+
+    }
+
+
+
 
     void Update()
 
@@ -60,18 +86,19 @@ public class CubeController : MonoBehaviour
             StartCoroutine(ChangeVelocity());
         }
     }
-
+    bool FirstTime = true;
      void FixedUpdate()
-    {
-        Debug.Log(Time.deltaTime + " Angular Velocity " + angularVelocity);
+     {
         angle += angularVelocity * Time.deltaTime;
         float x = Mathf.Sin(angle) * radius;
         float y = 0f;
         float z = Mathf.Cos(angle) * radius;
 
-        center = userTransform.position;
-        transform.position = center + new Vector3(x, y, z);
-    }
+        centre = userTransform.position;
+        transform.position = centre + new Vector3(x, y, z);
+
+        
+     }
 
 
     IEnumerator AverageHeartRate()
@@ -95,7 +122,6 @@ public class CubeController : MonoBehaviour
 
     IEnumerator AverageMeditation()
     {
-        collectingMeditation = true;
         float time = 0f;
 
         meditationAverages.Clear();
@@ -109,14 +135,12 @@ public class CubeController : MonoBehaviour
         }
 
         averageMeditation = Mathf.RoundToInt((float)meditationAverages.Average());
-        Debug.Log(Time.deltaTime + " Meditation Average:" + averageMeditation);
-        collectingMeditation = false;
     }
 
     private float HeartRateSigmoid(int hr, int midpoint = 70, int scale = 5)
     {
         float x = (hr - midpoint) / scale;
-        float sigmoid = 1 / (1 + Mathf.Exp(-x));
+        float sigmoid = 1 / (1 + Mathf.Exp(x));
         return sigmoid;
     }
 
@@ -131,14 +155,12 @@ public class CubeController : MonoBehaviour
     {
         changingColour = true;
         Debug.Log(Time.deltaTime + " HR Average:" + averageHeartRate);
-        //float heartRateNorm = (float)averageHeartRate / 100;
         float heartRateScaled = HeartRateSigmoid(averageHeartRate);
-        //heartRateNorm *= 2.5f;
-        // Debug.Log("HR NORm " + heartRateNorm);
+
 
         Color oldColour = cubeRenderer.material.color;
 
-        // at the moment this will just make it vary between black (low HR's) and white (high HR's)
+        // at the moment this will just make it vary between white (low HR's) and black (high HR's)
         Color newColor = new Color(heartRateScaled, heartRateScaled, heartRateScaled);
 
         float time = 0f;
