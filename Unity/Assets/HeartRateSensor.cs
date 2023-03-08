@@ -4,6 +4,7 @@ using System.Text;
 using UnityEngine;
 using System.Threading.Tasks;
 using System.Threading;
+using System.Collections.Generic;
 
 // Credit to
 // https://gist.github.com/danielbierwirth/0636650b005834204cb19ef5ae6ccedb
@@ -12,6 +13,8 @@ class HeartRateSensor : MonoBehaviour
     private TcpClient socketConnection;
     private Task listenTask;
     private CancellationTokenSource cancellationTokenSource;
+
+    public static List<(string, int)> hrReadings { get; private set; }
 
     private static int HeartRate;
 
@@ -23,6 +26,7 @@ class HeartRateSensor : MonoBehaviour
 
     private void ConnectToTcpServer()
     {
+        hrReadings = new List<(string, int)>();
         try
         {
             cancellationTokenSource = new CancellationTokenSource();
@@ -38,6 +42,7 @@ class HeartRateSensor : MonoBehaviour
     private void OnDestroy()
     {
         cancellationTokenSource.Cancel();
+        socketConnection.Close();
     }
 
     private void ListenForData(CancellationToken cancellationToken)
@@ -71,7 +76,7 @@ class HeartRateSensor : MonoBehaviour
 
                             if (int.TryParse(serverMessage, out HeartRate))
                             {
-                                // Debug.Log("Heart Rate" + HeartRate);
+                                hrReadings.Add((DateTime.Now.ToString(), HeartRate));
                             }
                             else
                             {

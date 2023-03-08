@@ -4,12 +4,15 @@ using System.Text;
 using UnityEngine;
 using System.Threading.Tasks;
 using System.Threading;
+using System.Collections.Generic;
 
 public class Myndplay : MonoBehaviour
 {
     private TcpClient socketConnection;
     private Task listenTask;
     private CancellationTokenSource cancellationTokenSource;
+
+    public static List<(string, int)> EEGreadings { get; private set; }
 
     private static int meditationValue;
 
@@ -23,6 +26,7 @@ public class Myndplay : MonoBehaviour
     {
         try
         {
+            EEGreadings = new List<(string, int)>();
             cancellationTokenSource = new CancellationTokenSource();
             var CancellationToken = cancellationTokenSource.Token;
             listenTask = Task.Run(() => ListenForData(CancellationToken));
@@ -37,6 +41,7 @@ public class Myndplay : MonoBehaviour
     private void OnDestroy()
     {
         cancellationTokenSource.Cancel();
+        socketConnection.Close();
     }
 
     private void ListenForData(CancellationToken cancellationToken)
@@ -61,19 +66,24 @@ public class Myndplay : MonoBehaviour
                             // Convert byte array to string message. 						
                             string serverMessage = Encoding.ASCII.GetString(incommingData);
 
-                            if (int.TryParse(serverMessage, out meditationValue))
-                            {
-                                // Debug.Log("meditation:"meditationValue);
-                            }
-                            else
-                            {
-                                Debug.Log("Could not parse");
-                            }
+
 
 
                             if (cancellationToken.IsCancellationRequested)
                             {
+                                socketConnection.Close();
                                 return;
+                            }
+
+
+
+                            if (int.TryParse(serverMessage, out meditationValue))
+                            {
+                                EEGreadings.Add((DateTime.Now.ToString(), meditationValue));
+                            }
+                            else
+                            {
+                                Debug.Log("Could not parse");
                             }
                         }
                     }

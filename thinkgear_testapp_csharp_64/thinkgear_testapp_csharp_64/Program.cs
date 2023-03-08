@@ -4,6 +4,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Net;
 using System.Net.Sockets;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -73,7 +74,7 @@ namespace thinkgear_testapp_csharp_64
                 // Then a window will open. Check for the COM port with "Mynband 'Bluetooth Serial Port'
                 // and direction outgoing.
 
-                string comPortName = "COM6";
+                string comPortName = "COM3";
 
                 errCode = NativeThinkgear.TG_Connect(connectionID,
                               comPortName,
@@ -124,8 +125,10 @@ namespace thinkgear_testapp_csharp_64
                     meditation = meditationCalc();
                     Console.WriteLine($"Meditation Value: {meditation}");
                 }
-                catch //exception occur when client disconnects
+                catch(Exception e) 
                 {
+                    Console.WriteLine(e);
+                    Console.WriteLine("Please restart this terminal");
                     break;
                 }
             }

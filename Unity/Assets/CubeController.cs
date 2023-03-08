@@ -42,8 +42,6 @@ public class CubeController : MonoBehaviour
 
         Vector3 diffVect = transform.position - new Vector3(0, 0, 1);
 
-
-        Debug.Log(gameObject.name + " diff vector " + diffVect);
         if(diffVect.magnitude != 0)
         {
             angle = 2 * Mathf.Asin((diffVect.magnitude)/2);
@@ -67,7 +65,6 @@ public class CubeController : MonoBehaviour
 
     {
 
-
         // only start a coroutine if it has finished from last time
         if (!collectingHeartRates)
         {
@@ -86,7 +83,6 @@ public class CubeController : MonoBehaviour
             StartCoroutine(ChangeVelocity());
         }
     }
-    bool FirstTime = true;
      void FixedUpdate()
      {
         angle += angularVelocity * Time.deltaTime;
@@ -144,11 +140,18 @@ public class CubeController : MonoBehaviour
         return sigmoid;
     }
 
-    private float MeditationExponential(int med, int halfLife=50, float scalar = 2)
+    private float MeditationExponential(int med, int halfLife=50, float scalar = 1f)
     {
         float y = scalar * Mathf.Exp((-Mathf.Log(2) / halfLife) * med);
   
         return y;
+    }
+    public float MeditationLinear(int med, float floor=0.1f, float ceiling=1f)
+    {
+        float delta = ceiling- floor;
+        float y = ceiling - (delta * ((float)med / 100));
+        return y;
+
     }
 
     IEnumerator ChangeColour()
@@ -186,7 +189,8 @@ public class CubeController : MonoBehaviour
     {
         changingVelocity = true;
 
-        float meditationScaled = MeditationExponential(averageMeditation);
+        float meditationScaled = MeditationLinear(averageMeditation);
+        Debug.Log(Time.deltaTime + " Meditation Average:" + meditationScaled);
 
 
         float oldAngularVelocity = angularVelocity;
