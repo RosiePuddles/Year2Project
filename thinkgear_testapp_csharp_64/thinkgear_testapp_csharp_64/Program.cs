@@ -16,6 +16,7 @@ namespace thinkgear_testapp_csharp_64
         static int meditation = 0;
         static int count = 0;
         static int connectionID = 0;
+        static string comPortName = "COM3";
         static void Tcp()
         {
             // Starts server on local host with port 8080
@@ -74,7 +75,7 @@ namespace thinkgear_testapp_csharp_64
                 // Then a window will open. Check for the COM port with "Mynband 'Bluetooth Serial Port'
                 // and direction outgoing.
 
-                string comPortName = "COM3";
+
 
                 errCode = NativeThinkgear.TG_Connect(connectionID,
                               comPortName,
@@ -135,6 +136,16 @@ namespace thinkgear_testapp_csharp_64
         }
         static void Main(string[] args)
         {
+            Console.WriteLine("Please provide the COM port Myndplay is outgoing on");
+            Console.Write("COM:");
+            int comNum;
+            while(!int.TryParse(Console.ReadLine(), out comNum))
+            {
+                Console.WriteLine("Please provide a valid COM port number");
+            }
+            comPortName = "COM" + comNum.ToString();
+            Console.WriteLine(comPortName);
+
             Task TCP = new Task(Tcp);
             Task Myndplay = new Task(MyndplayReadings);
 

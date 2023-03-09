@@ -80,7 +80,22 @@ class HeartRateSensor : MonoBehaviour
                             }
                             else
                             {
-                                Debug.Log("Could not parse");
+                                try
+                                {
+                                    if (serverMessage[0] == 'B') {
+                                        CubeController.ChangeBaseHR(int.Parse(serverMessage.Substring(1)));
+                                        Debug.Log("Base line " + int.Parse(serverMessage.Substring(1)));
+                                    }
+                                    else
+                                    {
+                                        throw new Exception("The first character is not B");
+                                    }
+                                }
+                                catch(Exception ex) 
+                                {
+                                    Debug.Log(ex.Message);
+                                }
+                             
                             }
 
 

@@ -41,7 +41,11 @@ public class Myndplay : MonoBehaviour
     private void OnDestroy()
     {
         cancellationTokenSource.Cancel();
-        socketConnection.Close();
+        if (socketConnection != null)
+        {
+            socketConnection.Close();
+        }
+
     }
 
     private void ListenForData(CancellationToken cancellationToken)

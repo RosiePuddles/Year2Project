@@ -12,6 +12,9 @@ public class CubeController : MonoBehaviour
     private int averageHeartRate;
     private int averageMeditation;
 
+    [SerializeField]
+    static int baseLineHR;
+
 
     private bool changingColour;
     bool changingVelocity;
@@ -32,7 +35,7 @@ public class CubeController : MonoBehaviour
 
     void Awake()
     {
-        
+        baseLineHR = 70; 
         cubeRenderer = gameObject.GetComponent<Renderer>();
         radius = CubeSpawner.cubeRadius;
 
@@ -153,12 +156,21 @@ public class CubeController : MonoBehaviour
         return y;
 
     }
+    public static void ChangeBaseHR(int newBase)
+    {
+        if(newBase >30 && newBase < 150)
+        {
+            baseLineHR = newBase;
+        }
 
+    }
     IEnumerator ChangeColour()
     {
         changingColour = true;
         Debug.Log(Time.deltaTime + " HR Average:" + averageHeartRate);
-        float heartRateScaled = HeartRateSigmoid(averageHeartRate);
+        float heartRateScaled = HeartRateSigmoid(averageHeartRate, baseLineHR);
+        Debug.Log("Baseline cube " + baseLineHR);
+
 
 
         Color oldColour = cubeRenderer.material.color;

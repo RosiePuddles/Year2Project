@@ -8,10 +8,13 @@ using Windows.Devices.Bluetooth.GenericAttributeProfile;
 using Windows.Storage.Streams;
 using System.Net.Sockets;
 using System.Net;
+using System.Collections.Generic;
+using System.Linq;
 
 // Credit to
-// https://codingvision.net/c-simple-tcp-server for TCP code
-// and 
+// https://codingvision.net/c-simple-t
+// cp-server for TCP code
+
 
 namespace HRConsole
 {
@@ -19,25 +22,55 @@ namespace HRConsole
     {
         static DeviceInformation device;
         static int HR = 100;
-
+        static int baseLineHR = -1;
         // Bluetooth HR services start with 180d
         static string HEART_RATE_SERVICE_ID = "180d";
+        static List<int> baselineValues  =new List<int>();
+        static bool takeBaseline = false;
 
 
+        static void Main(string[] args)
+        {
+            var HeartRateTask = HeartRateReadings();
+            Task TcpTask = new Task(Tcp);
+            TcpTask.Start();
+
+            HeartRateTask.Wait();
+        }
         static void Tcp()
         {
             TcpListener server = new TcpListener(IPAddress.Parse("127.0.0.1"), 1234);
             // we set our IP address as server's address, and we also set the port: 1234
 
             server.Start(); // this will start the server
-            while (true) //we wait for a connection
+
+
+            while (true) 
             {
                 TcpClient client = server.AcceptTcpClient(); //if a connection exists, the server will accept it
                 Console.WriteLine("Client Connected");
                 NetworkStream ns = client.GetStream(); //networkstream is used to send/receive messages
 
-                while (client.Connected) //while the client is connected, we look for incoming messages
+
+                // here we check if the base line heart rate has been set
+                // if it has, then this is the first thing we send to Unity
+                if (baseLineHR != -1)
                 {
+                    try
+                    {
+                        // We put a B in front of the heart rate to indicate that this is the base line heart rate
+                        string message = "B" + baseLineHR.ToString();
+                        ns.Write(Encoding.ASCII.GetBytes(message), 0, message.Length);
+                    }
+                    catch
+                    {
+                        break;
+                    }
+                }
+
+
+                while (client.Connected) // while the client is connected, we regularly send 
+                {    
                     Thread.Sleep(200); // send the message every 200 milliseconds
                     try
                     {
@@ -53,15 +86,7 @@ namespace HRConsole
             }
         }
 
-        static void Main(string[] args)
-        {
-            Task TcpTask = new Task(Tcp);
-            var HeartRateTask = HeartRateReadings();
 
-            TcpTask.Start();
-
-            HeartRateTask.Wait();
-        }
 
         static async Task HeartRateReadings()
         {
@@ -94,7 +119,7 @@ namespace HRConsole
             }
             deviceWatcher.Stop();
             Console.WriteLine("\nPress Any Key To Pair");
-            Console.ReadKey();
+            Console.ReadKey(true);
             BluetoothLEDevice bluetoothLeDevice = await BluetoothLEDevice.FromIdAsync(device.Id);
             Console.WriteLine("Attempting to Pair");
 
@@ -134,7 +159,27 @@ namespace HRConsole
                                                 GattClientCharacteristicConfigurationDescriptorValue.Notify);
                                     if (status == GattCommunicationStatus.Success)
                                     {
+
                                         characteristic.ValueChanged += Characteristic_ValueChanged;
+                                        Console.WriteLine("Do you want to take a baseline heart rate? Reply either <y> or <n>");
+                                        ConsoleKeyInfo keyInfo = Console.ReadKey(true);
+                                        if (keyInfo.KeyChar == 'y')
+                                        {
+                                            takeBaseline = true;
+                                            Console.WriteLine("Please wait 90 seconds");
+
+                                            Thread.Sleep(900);
+                                            Console.WriteLine("Baseline heart rate taken");
+                                            baseLineHR = (int)Math.Round(baselineValues.Average());
+
+                                            takeBaseline = false;
+                                            baselineValues.Clear();
+
+                                        }
+                                        else
+                                        {
+                                            Console.WriteLine("Baseline heart rate not taken");
+                                        }
                                         // Server has been informed of clients interest.
                                     }
                                 }
@@ -146,11 +191,15 @@ namespace HRConsole
                         }
                     }
                 }
+
+
+
             }
             else
             {
                 Console.WriteLine("device unreachable");
             }
+
 
             Console.WriteLine("\npress any key to exit");
             Console.ReadKey();
@@ -165,7 +214,14 @@ namespace HRConsole
             var flags = reader.ReadByte();
             var value = reader.ReadByte();
             HR = value;
+            if(takeBaseline) // takes baseline values untill explicitly told not to
+            {
+                baselineValues.Add(value);
+            }
+
             Console.WriteLine($"Heart Rate: {value}");
+
+
         }
 
         private static void DeviceWatcher_Stopped(DeviceWatcher sender, object args)
@@ -188,7 +244,7 @@ namespace HRConsole
             //throw new NotImplementedException();
         }
 
-        // Ran constantly when deviceWatcher.start() is ran in HeartRateReadings
+        // Ran a few times when deviceWatcher.start() is ran in HeartRateReadings
         // deviceWatcher.stop() is called after device is no longer null (which occurs, when the Polar H10 is found)
         private static void DeviceWatcher_Added(DeviceWatcher sender, DeviceInformation args)
         {
