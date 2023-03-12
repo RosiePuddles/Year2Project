@@ -122,7 +122,7 @@ namespace thinkgear_testapp_csharp_64
             {
                 try
                 {
-                    Thread.Sleep(1000); //Take a meditation reading every 200ms
+                    Thread.Sleep(1000); //Take a meditation reading every second
                     meditation = meditationCalc();
                     Console.WriteLine($"Meditation Value: {meditation}");
                 }

@@ -168,7 +168,7 @@ namespace HRConsole
                                             takeBaseline = true;
                                             Console.WriteLine("Please wait 90 seconds");
 
-                                            Thread.Sleep(900);
+                                            Thread.Sleep(90_000);
                                             Console.WriteLine("Baseline heart rate taken");
                                             baseLineHR = (int)Math.Round(baselineValues.Average());
 
