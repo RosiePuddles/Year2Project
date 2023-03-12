@@ -8,42 +8,42 @@ use std::{
 	hash::{Hash, Hasher},
 };
 
-use actix_web::{http::header::ContentType, post, web, Error, HttpResponse};
+use actix_web::{http::header::ContentType, post, web, Error, HttpMessage, HttpRequest, HttpResponse};
 use chrono::Local;
 use deadpool_postgres::{Client, Pool};
 use json::JsonValue;
 use rand::SeedableRng;
 use rand_chacha::rand_core::block::BlockRngCore;
 
-use crate::{
-	api::{db::ApiError, prelude::submitted::User},
-	logger::Logger,
-};
-
-/// Simple wrapper around a logger call
-macro_rules! logger_wrap {
-	($t: expr) => {
-		if let Err(e) = $t {
-			println!("Unable to write to log file! {}", e)
-		}
-	};
-}
+use crate::{api::prelude::submitted::User, db::ApiError, logger::Logger, logger_wrap};
 
 /// Verifies a user login and returns a user key from [`db_new_user_key`]
-async fn db_login(client: &Client, uname: String, logger: &web::Data<Logger<'_>>) -> Result<JsonValue, ApiError> {
+async fn db_login(
+	client: &Client,
+	uname: String,
+	logger: &web::Data<Logger<'_>>,
+	req: &HttpRequest,
+) -> Result<JsonValue, ApiError> {
 	macro_rules! get_wrapper {
 		($t: expr) => {
 			match $t {
 				Ok(t) => t,
 				Err(e) => {
-					logger_wrap!(logger.error(format!("{}:{} {:?}", file!(), line!(), e.to_string())));
+					logger_wrap!(
+						logger.error,
+						req,
+						format!("{}:{} {:?}", file!(), line!(), e.to_string())
+					);
 					return Err(ApiError::ServerError)
 				}
 			}
 		};
 	}
 	// check for existing uname and get uuid
-	let stmt = client.prepare(&include_str!("../../sql/user_check.sql")).await.unwrap();
+	let stmt = client
+		.prepare(&include_str!("../../sql/api/user_check.sql"))
+		.await
+		.unwrap();
 
 	let uuid = match client.query(&stmt, &[&uname]).await {
 		Ok(mut rows) => {
@@ -51,29 +51,39 @@ async fn db_login(client: &Client, uname: String, logger: &web::Data<Logger<'_>>
 				// don't need to check for multiple rows because uname is unique
 				get_wrapper!(row.try_get::<_, i32>(0))
 			} else {
-				logger_wrap!(logger.info(format!(
-					"{}:{} Login with unknown uname requested {:?}",
-					file!(),
-					line!(),
-					uname
-				)));
+				logger_wrap!(
+					logger.info,
+					req,
+					format!("{}:{} Login with unknown uname requested {:?}", file!(), line!(), uname)
+				);
 				return Err(ApiError::Gone)
 			}
 		}
 		Err(e) => {
-			logger_wrap!(logger.error(format!("{}:{} {:?}", file!(), line!(), e.to_string())));
+			logger_wrap!(
+				logger.error,
+				req,
+				format!("{}:{} {:?}", file!(), line!(), e.to_string())
+			);
 			return Err(ApiError::ServerError)
 		}
 	};
 
-	db_new_user_key(client, uuid, uname, logger).await
+	db_new_user_key(client, uuid, uname, logger, req).await
 }
 
 /// Get a new user key from a given UUID and uname
 pub(in crate::api) async fn db_new_user_key(
-	client: &Client, uuid: i32, uname: String, logger: &web::Data<Logger<'_>>,
+	client: &Client,
+	uuid: i32,
+	uname: String,
+	logger: &web::Data<Logger<'_>>,
+	req: &HttpRequest,
 ) -> Result<JsonValue, ApiError> {
-	let stmt = client.prepare(&include_str!("../../sql/user_login.sql")).await.unwrap();
+	let stmt = client
+		.prepare(&include_str!("../../sql/api/user_login.sql"))
+		.await
+		.unwrap();
 
 	let mut hasher = DefaultHasher::new();
 	uuid.hash(&mut hasher);
@@ -89,7 +99,11 @@ pub(in crate::api) async fn db_new_user_key(
 	let end = Local::now() + chrono::Days::new(1);
 
 	if let Err(e) = client.query(&stmt, &[&user_key, &uuid, &end]).await {
-		logger_wrap!(logger.error(format!("{}:{} {:?}", file!(), line!(), e.to_string())));
+		logger_wrap!(
+			logger.error,
+			req,
+			format!("{}:{} {:?}", file!(), line!(), e.to_string())
+		);
 		return Err(ApiError::ServerError)
 	};
 
@@ -102,15 +116,18 @@ pub(in crate::api) async fn db_new_user_key(
 /// User login path
 #[post("/api/login")]
 pub async fn user_login(
-	user: web::Json<User>, db_pool: web::Data<Pool>, logger: web::Data<Logger<'_>>,
+	req: HttpRequest,
+	user: web::Json<User>,
+	db_pool: web::Data<Pool>,
+	logger: web::Data<Logger<'_>>,
 ) -> Result<HttpResponse, Error> {
 	let user = user.into_inner();
-	logger_wrap!(logger.info("Connecting to database..."));
+	logger_wrap!(logger.info, req, "Connecting to database...");
 	let client: Client = db_pool.get().await.map_err(ApiError::PoolError)?;
-	logger_wrap!(logger.info("Connected to database. Sending query..."));
+	logger_wrap!(logger.info, req, "Connected to database. Sending query...");
 
-	let ret = db_login(&client, user.uname, &logger).await?;
-	logger_wrap!(logger.info("Returning"));
+	let ret = db_login(&client, user.uname, &logger, &req).await?;
+	logger_wrap!(logger.info, req, "Returning");
 	Ok(HttpResponse::Ok()
 		.content_type(ContentType::json())
 		.body(ret.to_string()))

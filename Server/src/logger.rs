@@ -1,17 +1,20 @@
 use std::{
-	cell::Cell,
+	cell::{Cell, Ref},
 	fmt::Display,
 	fs::File,
 	future::{ready, Ready},
 	io::Write,
 };
 
-use actix_web::{body::EitherBody, dev::{Service, ServiceRequest, ServiceResponse, Transform}, http::Method, web, Error, HttpMessage};
-use actix_web::dev::Payload;
-use actix_web::web::BytesMut;
+use actix_web::{
+	body::EitherBody,
+	cookie::Cookie,
+	dev::{Payload, Service, ServiceRequest, ServiceResponse, Transform},
+	http::{header::HeaderMap, Method, StatusCode},
+	web, Error, HttpMessage,
+};
 use chrono::Local;
-use futures_util::future::LocalBoxFuture;
-use futures_util::{Stream, StreamExt, TryFutureExt, TryStreamExt};
+use futures_util::{future::LocalBoxFuture, Stream, StreamExt, TryFutureExt, TryStreamExt};
 
 pub struct LoggerMiddleware;
 
@@ -57,7 +60,7 @@ where
 		let host = host.host();
 		let method = req.method().clone();
 		let path = req_inner.path();
-		if let Err(e) = logger.request(host, &method, path, req_inner.content_type()) {
+		if let Err(e) = logger.request(host, &method, path, req_inner.content_type(), req_inner.cookies()) {
 			println!("Unable to write to log file! {}", e)
 		}
 
@@ -90,7 +93,7 @@ where
 				.unwrap_or("unknown");
 			let method = res.request().method().clone();
 			let path = res.request().path();
-			if let Err(e) = logger.response(host, &method, path, res.status().as_u16()) {
+			if let Err(e) = logger.response(host, &method, path, res.status(), res.headers()) {
 				println!("Unable to write to log file! {}", e)
 			}
 			Ok(res)
@@ -117,7 +120,41 @@ impl Clone for Logger<'_> {
 	}
 }
 
+macro_rules! printer {
+	($n:ident) => {
+		pub fn $n<T: Display>(
+			&self,
+			host: &str,
+			method: &Method,
+			path: &str,
+			content_type: &str,
+			message: T,
+		) -> std::io::Result<()> {
+			let printed = format!(
+				"[{} {:<5}] {} {} {} {} {}\n",
+				Local::now().format(self.fmt),
+				stringify!($n).to_uppercase(),
+				host,
+				method,
+				path,
+				content_type,
+				message
+			);
+			if self.print {
+				print!("{}", printed)
+			}
+			self.write(printed)
+		}
+	};
+}
+
 impl<'a> Logger<'a> {
+	printer!(info);
+
+	printer!(error);
+
+	printer!(warn);
+
 	pub fn default(f: File, print: bool) -> Self {
 		Self {
 			f: Cell::new(f),
@@ -133,14 +170,25 @@ impl<'a> Logger<'a> {
 		Ok(())
 	}
 
-	pub fn request(&self, host: &str, method: &Method, path: &str, content_type: &str) -> std::io::Result<()> {
+	pub fn request<CPE: Display>(
+		&self,
+		host: &str,
+		method: &Method,
+		path: &str,
+		content_type: &str,
+		cookies: Result<Ref<Vec<Cookie<'_>>>, CPE>,
+	) -> std::io::Result<()> {
 		let printed = format!(
-			"[{} REQ  ] {} {} {} {}\n",
+			"[{} REQ  ] {} {} {} {} [{}]\n",
 			Local::now().format(self.fmt),
 			host,
 			method,
 			path,
-			content_type
+			content_type,
+			match cookies {
+				Ok(cj) => cj.iter().map(|c| c.to_string()).collect::<Vec<_>>().join(", "),
+				Err(e) => format!("Unable to parse cookies {}", e),
+			}
 		);
 		if self.print {
 			print!("{}", printed)
@@ -148,14 +196,35 @@ impl<'a> Logger<'a> {
 		self.write(printed)
 	}
 
-	pub fn response(&self, host: &str, method: &Method, path: &str, code: u16) -> std::io::Result<()> {
+	pub fn response(
+		&self,
+		host: &str,
+		method: &Method,
+		path: &str,
+		code: StatusCode,
+		headers: &HeaderMap,
+	) -> std::io::Result<()> {
 		let printed = format!(
-			"[{} RES  ] {} {} {} {}\n",
+			"[{} RES  ] {} {} {} {} [{}]\n",
 			Local::now().format(self.fmt),
 			host,
 			method,
 			path,
-			code
+			code,
+			headers
+				.iter()
+				.map(|(name, val)| format!(
+					"'{}':'{}'",
+					name,
+					val.to_str().unwrap_or(
+						&*val
+							.as_bytes()
+							.iter()
+							.fold(String::new(), |acc, b| format!("{}{:x}", acc, b))
+					)
+				))
+				.collect::<Vec<_>>()
+				.join(", ")
 		);
 		if self.print {
 			print!("{}", printed)
@@ -163,24 +232,8 @@ impl<'a> Logger<'a> {
 		self.write(printed)
 	}
 
-	pub fn info<T: Display>(&self, message: T) -> std::io::Result<()> {
-		let printed = format!("[{} INFO ] {}\n", Local::now().format(self.fmt), message);
-		if self.print {
-			print!("{}", printed)
-		}
-		self.write(printed)
-	}
-
-	pub fn error<T: Display>(&self, message: T) -> std::io::Result<()> {
-		let printed = format!("[{} ERROR] {}\n", Local::now().format(self.fmt), message);
-		if self.print {
-			print!("{}", printed)
-		}
-		self.write(printed)
-	}
-
-	pub fn warn<T: Display>(&self, message: T) -> std::io::Result<()> {
-		let printed = format!("[{} WARN ] {}\n", Local::now().format(self.fmt), message);
+	pub fn clean<T: Display>(&self, message: T) -> std::io::Result<()> {
+		let printed = format!("[{} CLEAN] {}\n", Local::now().format(self.fmt), message);
 		if self.print {
 			print!("{}", printed)
 		}

@@ -13,3 +13,16 @@ CREATE TABLE keys (
     uuid        int REFERENCES users(uuid),
     end_time    timestamp with time zone
 );
+CREATE TABLE admins (
+    email   text unique,
+    pwdh    char(128),
+    uuid    serial primary key
+);
+CREATE TABLE admin_auth (
+    auth_key    char(512) unique,
+    uuid        int REFERENCES admins(uuid),
+    end_time    timestamp with time zone
+);
+CREATE TABLE admin_blocked (
+    email   text unique
+);
