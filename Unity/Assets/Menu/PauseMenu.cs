@@ -6,6 +6,9 @@ using UnityEngine.XR;
 public class PauseMenu : MonoBehaviour
 {
     private GameObject pause_menu;
+    private GameObject left_controller;
+    private GameObject right_controller;
+
     private List<InputDevice> inputDevices = new List<InputDevice>();
     private bool menu_pressed = false;
     void Start()
@@ -13,13 +16,13 @@ public class PauseMenu : MonoBehaviour
         pause_menu = GameObject.Find("PauseMenu");
         pause_menu.SetActive(false);
 
+        left_controller = GameObject.Find("LeftHand Controller");
+        left_controller.SetActive(false);
+
+        right_controller = GameObject.Find("RightHand Controller");
+        right_controller.SetActive(false);
+
         UnityEngine.XR.InputDevices.GetDevices(inputDevices);
-        /*
-        if (inputDevices.Count > 0)
-        {
-            controller = inputDevices[0];
-        }
-        */
     }
     void Update()
     {
@@ -30,6 +33,8 @@ public class PauseMenu : MonoBehaviour
             {
                 menu_pressed = true;
                 pause_menu.SetActive(!pause_menu.activeSelf);
+                left_controller.SetActive(!left_controller.activeSelf);
+                right_controller.SetActive(!right_controller.activeSelf);
                 StartCoroutine(WaitForRelease(device));
                 
             }

@@ -43,3 +43,12 @@ C:\Users\josep\OneDrive\Documents\GOOD VERSION\Year2Project\HRConsole\HRConsole\
 C:\Users\josep\OneDrive\Documents\GOOD VERSION\Year2Project\HRConsole\HRConsole\obj\Debug\HRConsole.csproj.CopyComplete
 C:\Users\josep\OneDrive\Documents\GOOD VERSION\Year2Project\HRConsole\HRConsole\obj\Debug\HRConsole.exe
 C:\Users\josep\OneDrive\Documents\GOOD VERSION\Year2Project\HRConsole\HRConsole\obj\Debug\HRConsole.pdb
+T:\Year2Project\HRConsole\HRConsole\bin\Debug\HRConsole.exe.config
+T:\Year2Project\HRConsole\HRConsole\bin\Debug\HRConsole.exe
+T:\Year2Project\HRConsole\HRConsole\bin\Debug\HRConsole.pdb
+T:\Year2Project\HRConsole\HRConsole\obj\Debug\HRConsole.csproj.AssemblyReference.cache
+T:\Year2Project\HRConsole\HRConsole\obj\Debug\HRConsole.csproj.SuggestedBindingRedirects.cache
+T:\Year2Project\HRConsole\HRConsole\obj\Debug\HRConsole.csproj.CoreCompileInputs.cache
+T:\Year2Project\HRConsole\HRConsole\obj\Debug\HRConsole.csproj.CopyComplete
+T:\Year2Project\HRConsole\HRConsole\obj\Debug\HRConsole.exe
+T:\Year2Project\HRConsole\HRConsole\obj\Debug\HRConsole.pdb
