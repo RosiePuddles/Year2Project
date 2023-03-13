@@ -30,6 +30,7 @@ pub struct Session {
 	pub uuid: i32,
 	pub time: DateTime<Local>,
 	pub hr: Vec<i32>,
+	pub meditation: Vec<i32>,
 	pub gaze: Vec<Point>,
 }
 
@@ -51,6 +52,7 @@ pub mod submitted {
 		pub key: String,
 		pub time: DateTime<Local>,
 		pub hr: Vec<i32>,
+		pub meditation: Vec<i32>,
 		pub gaze: Vec<Point>,
 	}
 
@@ -61,6 +63,7 @@ pub mod submitted {
 				uuid,
 				time: self.time,
 				hr: self.hr,
+				meditation: self.meditation,
 				gaze: self.gaze,
 			}
 		}

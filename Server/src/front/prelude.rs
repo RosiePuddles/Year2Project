@@ -12,10 +12,23 @@ pub struct Admin {
 	pub pwdh: String,
 }
 
-#[derive(Deserialize, Serialize, Debug)]
+#[derive(Deserialize, Serialize)]
 pub struct AdminSubmission {
 	pub email: String,
 	pub password: String,
+}
+
+#[derive(Deserialize, Serialize)]
+pub struct DateRange {
+	pub start: DateTime<Local>,
+	pub end: DateTime<Local>,
+	pub format: DownloadFormat
+}
+
+#[derive(Deserialize, Serialize)]
+pub enum DownloadFormat {
+	JSON,
+	CSV,
 }
 
 /// Admin auth key row for the table `admin_auth`

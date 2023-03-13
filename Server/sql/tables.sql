@@ -6,6 +6,7 @@ CREATE TABLE sessions (
     uuid        int REFERENCES users(uuid),
     time_start  timestamp with time zone,
     hr          int[],
+    meditation  int[],
     gaze        point[]
 );
 CREATE TABLE keys (

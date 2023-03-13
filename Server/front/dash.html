@@ -2,10 +2,22 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Login</title>
+    <title>Dashboard</title>
 </head>
 <body>
-<h1>sup fuckers</h1>
+<h1>Dashboard</h1>
+<form id="form" novalidate>
+    <label for="start_date">Start date</label>
+    <input type="datetime-local" id="start_date" onchange="check_start()" name="start" required><br>
+    <label for="end_date">End date</label>
+    <input type="datetime-local" id="end_date" onchange="check_end()" name="end" required><br>
+    <label for="format">Download format</label>
+    <select id="format" name="format" required>
+        <option name="CSV">CSV</option>
+        <option name="json">JSON</option>
+    </select><br>
+    <button class="btn btn-primary" type="submit">Download</button>
+</form>
 <button onclick="log_out()">Log out</button>
 </body>
 <script src="dash.min.js"></script>
