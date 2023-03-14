@@ -5,7 +5,7 @@ use uuid::Uuid;
 
 use crate::{api::prelude::submitted::Session, db::ApiError, logger::Logger, logger_wrap};
 
-pub async fn db_add_user(
+pub async fn db_add_session(
 	client: &Client,
 	session: Session,
 	logger: &web::Data<Logger<'_>>,
@@ -85,7 +85,7 @@ pub async fn db_add_user(
 		.await
 		.unwrap();
 	if let Err(e) = client
-		.query(&stmt, &[&session.uuid, &session.time, &session.hr, &session.gaze])
+		.query(&stmt, session.query_params().as_slice())
 		.await
 	{
 		logger_wrap!(
@@ -106,12 +106,12 @@ pub async fn submit_session(
 	logger: web::Data<Logger<'_>>,
 	req: HttpRequest,
 ) -> Result<HttpResponse, Error> {
-	let user_info: Session = user.into_inner();
+	let session: Session = user.into_inner();
 	logger_wrap!(logger.info, req, "Connecting to database...");
 	let client: Client = db_pool.get().await.map_err(ApiError::PoolError)?;
 	logger_wrap!(logger.info, req, "Connected to database. Sending query...");
 
-	let new_user = db_add_user(&client, user_info, &logger, &req).await?;
+	db_add_session(&client, session, &logger, &req).await?;
 	logger_wrap!(logger.info, req, "Returning");
-	Ok(HttpResponse::Ok().json(new_user))
+	Ok(HttpResponse::Ok().finish())
 }

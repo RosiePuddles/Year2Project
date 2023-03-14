@@ -1,3 +1,8 @@
+//! # Custom logger middleware
+//!
+//! this provides the logger used by the server. I'm not too sure why it's constructed like it is,
+//! so if you want details have a look at the [Actix middleware docs](https://actix.rs/docs/middleware/)
+
 use std::{
 	cell::{Cell, Ref},
 	fmt::Display,
@@ -101,9 +106,16 @@ where
 	}
 }
 
+/// Primary logger
+///
+/// This handles all the loggin agter being constructed by the Actix App
 pub struct Logger<'a> {
+	/// Cell for the logger file (server.log) to allow writing to a file
 	f: Cell<File>,
+	/// Datetime format. Defaults to `%+`. See [`crate::format::strftime`] for format codes
 	fmt: &'a str,
+	/// Print bool. If true it will both print logs to stdout and the log file, otherwise it will
+	/// just write to the log file
 	print: bool,
 }
 
@@ -122,6 +134,7 @@ impl Clone for Logger<'_> {
 
 macro_rules! printer {
 	($n:ident) => {
+		#[doc = concat!(stringify!($n), " log level")]
 		pub fn $n<T: Display>(
 			&self,
 			host: &str,
@@ -150,9 +163,7 @@ macro_rules! printer {
 
 impl<'a> Logger<'a> {
 	printer!(info);
-
 	printer!(error);
-
 	printer!(warn);
 
 	pub fn default(f: File, print: bool) -> Self {
@@ -163,6 +174,12 @@ impl<'a> Logger<'a> {
 		}
 	}
 
+	/// General purpose write function for internal use.\
+	/// **Uses unsafe code:**\
+	/// To allow writing to a file, we take the file as a `*mut File` then use
+	/// `f_ptr.as_ref().unwrap()` in an unsafe block to get a reference to the file. We then write
+	/// to the mutable file reference. This was the only way I've found to be able to write to a log
+	/// file under an immutable struct.
 	fn write<T: ToString>(&self, msg: T) -> std::io::Result<()> {
 		let f_ptr = self.f.as_ptr();
 		let mut f_ref = unsafe { f_ptr.as_ref().unwrap() };
@@ -170,6 +187,7 @@ impl<'a> Logger<'a> {
 		Ok(())
 	}
 
+	/// Request log. This is used when a request is made and will write general request info.
 	pub fn request<CPE: Display>(
 		&self,
 		host: &str,
@@ -196,6 +214,8 @@ impl<'a> Logger<'a> {
 		self.write(printed)
 	}
 
+	/// Response log. This is used when a request is responded to and includes useful response
+	/// information
 	pub fn response(
 		&self,
 		host: &str,
@@ -231,7 +251,10 @@ impl<'a> Logger<'a> {
 		}
 		self.write(printed)
 	}
-
+	
+	/// Cleaner log call. This is made by the [`clean`](crate::front::clean) function when it needs
+	/// to log something and is typically an error. A call to this is normally wrapped under a
+	/// [`logger_wrap!`](crate::logger_wrap!) call
 	pub fn clean<T: Display>(&self, message: T) -> std::io::Result<()> {
 		let printed = format!("[{} CLEAN] {}\n", Local::now().format(self.fmt), message);
 		if self.print {

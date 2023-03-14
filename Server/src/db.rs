@@ -1,3 +1,5 @@
+//! General database structs
+
 use std::fmt::{Display, Formatter};
 
 use actix_web::{HttpResponse, ResponseError};

@@ -1,8 +1,18 @@
+//! # File cleaner script
+
 use std::time::{Duration, SystemTime};
 
 use crate::{logger::Logger, logger_wrap};
 
+/// This function handles file cleaning. Any generated files for download are places in `$CWD/tmp`
+/// and made available for up to 1 hour after creation. After that point this function will remove
+/// them. It will also attempt to remove files it cannot get proper data from.
 pub fn clean(logger: Logger<'_>) -> ! {
+	if !std::path::Path::new("tmp").exists() {
+		if let Err(e) =  std::fs::create_dir("tmp") {
+			logger_wrap!(logger.clean, format!("Unable to create tmp dir - {}", e))
+		}
+	}
 	loop {
 		'main: loop {
 			let cwd = match std::env::current_dir() {

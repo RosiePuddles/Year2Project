@@ -22,6 +22,6 @@ paths!(
 	default statics::not_found_route(),
 	login::front_login, login::front_login_post,
 	register::front_register, register::front_register_post,
-	statics::index, statics::account_term, statics::js_files,
+	statics::index, statics::js_files,
 	dash::front_dash, dash::front_dash_download, dash::download_file
 );

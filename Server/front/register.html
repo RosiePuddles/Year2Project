@@ -1,1 +1,44 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"/><title>Register</title><link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD" crossorigin="anonymous"/><script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js" integrity="sha384-w76AqPfDkMBDXo30jS1Sgez6pr3x5MlQ1ZAGC+nuZB+EYdgRZgiwxhTBTkF7CXvN" crossorigin="anonymous"></script><script src="sha3.min.js"></script></head><body><div class="row"><div class="col-lg-4 col-md-3 col-sm-1"></div><div class="col-lg-4 col-md-6 col-sm-10"><form id="form" novalidate><div class="mb-3"><label class="form-label" for="form_email">Email address</label><input id="form_email" class="form-control" type="email" aria-describedby="emailHelp" name="email" required=""/><div id="email-feedback" class="invalid-feedback">Please enter an email address</div></div><div class="mb-3"><label class="form-label" for="password">Password</label><input id="password" class="form-control" type="password" minlength="5" name="password" required=""/><div class="invalid-feedback">Please enter a password at least 5 characters long</div></div><div class="invalid-feedback">Passwords must match</div><div class="mb-3 form-check"><input id="tac" class="form-check-input" type="checkbox" required=""/><label class="form-check-label" for="tac">By checking this you agree to our <a href="terms_and_conditions">account terms and conditions</a></label><div class="invalid-feedback">You must agree to the terms and conditions to register</div></div><button class="btn btn-primary" type="submit">Submit</button></form></div></div></body><script src="register.min.js"></script></html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8"/>
+	<title>Register</title>
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet"
+				integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD" crossorigin="anonymous"/>
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"
+					integrity="sha384-w76AqPfDkMBDXo30jS1Sgez6pr3x5MlQ1ZAGC+nuZB+EYdgRZgiwxhTBTkF7CXvN"
+					crossorigin="anonymous"></script>
+	<script src="sha3.min.js"></script>
+</head>
+<body>
+<div class="row">
+	<div class="col-lg-4 col-md-3 col-sm-1"></div>
+	<div class="col-lg-4 col-md-6 col-sm-10">
+		<form id="form" novalidate>
+			<div class="mb-3"><label class="form-label" for="form_email">Email address</label><input id="form_email"
+																																															 class="form-control"
+																																															 type="email"
+																																															 aria-describedby="emailHelp"
+																																															 name="email"
+																																															 required=""/>
+				<div id="email-feedback" class="invalid-feedback">Please enter an email address</div>
+			</div>
+			<div class="mb-3"><label class="form-label" for="password">Password</label><input id="password"
+																																												class="form-control"
+																																												type="password" minlength="5"
+																																												name="password" required=""/>
+				<div class="invalid-feedback">Please enter a password at least 5 characters long</div>
+			</div>
+			<div class="invalid-feedback">Passwords must match</div>
+			<div class="mb-3 form-check"><input id="tac" class="form-check-input" type="checkbox" required=""/><label
+							class="form-check-label" for="tac">By checking this you agree to use any data in accordance with the EU
+				GDPR</label>
+				<div class="invalid-feedback">You must agree to the terms and conditions to register</div>
+			</div>
+			<button class="btn btn-primary" type="submit">Submit</button>
+		</form>
+	</div>
+</div>
+</body>
+<script src="register.min.js"></script>
+</html>

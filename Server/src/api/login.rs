@@ -14,6 +14,7 @@ use deadpool_postgres::{Client, Pool};
 use json::JsonValue;
 use rand::SeedableRng;
 use rand_chacha::rand_core::block::BlockRngCore;
+use uuid::Uuid;
 
 use crate::{api::prelude::submitted::User, db::ApiError, logger::Logger, logger_wrap};
 
@@ -49,7 +50,7 @@ async fn db_login(
 		Ok(mut rows) => {
 			if let Some(row) = rows.pop() {
 				// don't need to check for multiple rows because uname is unique
-				get_wrapper!(row.try_get::<_, i32>(0))
+				get_wrapper!(row.try_get::<_, Uuid>(0))
 			} else {
 				logger_wrap!(
 					logger.info,
@@ -75,7 +76,7 @@ async fn db_login(
 /// Get a new user key from a given UUID and uname
 pub(in crate::api) async fn db_new_user_key(
 	client: &Client,
-	uuid: i32,
+	uuid: Uuid,
 	uname: String,
 	logger: &web::Data<Logger<'_>>,
 	req: &HttpRequest,

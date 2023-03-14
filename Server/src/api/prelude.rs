@@ -5,6 +5,7 @@ use chrono::{DateTime, Local};
 use geo_types::Point;
 use serde::{Deserialize, Serialize};
 use tokio_pg_mapper_derive::PostgresMapper;
+use tokio_postgres::types::ToSql;
 use uuid::Uuid;
 
 /// Internal user serialised from the `users` table
@@ -33,6 +34,12 @@ pub struct Session {
 	pub hr: Vec<i32>,
 	pub meditation: Vec<i32>,
 	pub gaze: Vec<Point>,
+}
+
+impl Session {
+	pub fn query_params(&self) -> Vec<&(dyn ToSql + Sync)> {
+		vec![&self.uuid, &self.time, &self.hr, &self.meditation, &self.gaze]
+	}
 }
 
 pub mod submitted {

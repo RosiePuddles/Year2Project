@@ -11,9 +11,6 @@ pub async fn js_files(file: web::Path<(String,)>) -> impl Responder {
 	NamedFile::open(format!("front/{}.js", file.into_inner().0))
 }
 
-#[get("/terms_and_conditions")]
-pub async fn account_term() -> impl Responder { NamedFile::open("front/account_terms.html") }
-
 async fn not_found(req: HttpRequest) -> impl Responder {
 	match NamedFile::open("front/404.html") {
 		Ok(nf) => Either::Left(nf.customize().with_status(StatusCode::NOT_FOUND).respond_to(&req)),

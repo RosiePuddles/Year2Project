@@ -5,6 +5,7 @@
 use actix_web::{http::header::ContentType, post, web, Error, HttpMessage, HttpRequest, HttpResponse};
 use deadpool_postgres::{Client, Pool};
 use json::JsonValue;
+use uuid::Uuid;
 
 use crate::{api::prelude::submitted::User, db::ApiError, logger::Logger, logger_wrap};
 
@@ -72,7 +73,7 @@ async fn db_add_user(
 			);
 			return Err(ApiError::ServerError)
 		}
-		1 => get_wrapper!(rows.first().unwrap().try_get::<_, i32>(0)),
+		1 => get_wrapper!(rows.first().unwrap().try_get::<_, Uuid>(0)),
 		t => {
 			logger_wrap!(
 				logger.warn,
@@ -84,7 +85,7 @@ async fn db_add_user(
 					t
 				)
 			);
-			get_wrapper!(rows.first().unwrap().try_get::<_, i32>(0))
+			get_wrapper!(rows.first().unwrap().try_get::<_, Uuid>(0))
 		}
 	};
 

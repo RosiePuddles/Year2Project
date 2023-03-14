@@ -1,1 +1,1 @@
-INSERT INTO sessions VALUES ($1, $2, $3, $4);
+INSERT INTO sessions VALUES ($1, $2, $3, $4, $5);

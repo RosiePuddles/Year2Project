@@ -10,10 +10,11 @@ use std::{
 
 use actix_files::NamedFile;
 use actix_web::{get, post, web, HttpMessage, HttpRequest, HttpResponse};
-use chrono::Local;
+use chrono::{DateTime, Local};
 use deadpool_postgres::Pool;
 use rand::prelude::SliceRandom;
 use tokio_pg_mapper::FromTokioPostgresRow;
+use uuid::Uuid;
 
 use crate::{
 	api::Session,
@@ -26,7 +27,7 @@ async fn cookie_check(
 	req: &HttpRequest,
 	db_pool: &web::Data<Pool>,
 	logger: &web::Data<Logger<'_>>,
-) -> Result<i32, HttpResponse> {
+) -> Result<Uuid, HttpResponse> {
 	if let Some(cookie) = req.cookie("login") {
 		match db_pool.get().await {
 			Ok(client) => {
@@ -37,7 +38,7 @@ async fn cookie_check(
 				match client.query(&stmt, &[&cookie.value()]).await {
 					Ok(mut rows) => {
 						if let Some(uuid_row) = rows.pop() {
-							match uuid_row.try_get::<_, i32>(0) {
+							match uuid_row.try_get::<_, Uuid>(0) {
 								Ok(uuid) => return Ok(uuid),
 								Err(e) => {
 									logger_wrap!(logger.error, req, format!("UUID get unwrap error - {:?}", e))
@@ -165,7 +166,7 @@ pub async fn front_dash_download(
 		DownloadFormat::JSON => "json",
 		DownloadFormat::CSV => "csv",
 	};
-	let f_name = format!("{}-{}.{}", uuid, Local::now().to_rfc3339(), file_extension);
+	let f_name = format!("{}.{}.{}", uuid, Local::now().to_rfc3339(), file_extension);
 	if !std::path::Path::new("tmp").exists() {
 		std::fs::create_dir("tmp").expect("Unable to create tmp dir");
 	}
@@ -193,22 +194,27 @@ pub async fn front_dash_download(
 	)
 }
 
-#[get("/download/{path}")]
+#[get("/download/{uuid}.{time}.{ext}")]
 pub async fn download_file(
 	req: HttpRequest,
-	path: web::Path<(String,)>,
+	path: web::Path<(Uuid, DateTime<Local>, String)>,
 	db_pool: web::Data<Pool>,
 	logger: web::Data<Logger<'_>>,
 ) -> HttpResponse {
 	let path = path.into_inner();
 	match cookie_check(&req, &db_pool, &logger).await {
-		Ok(_) => {}
+		Ok(uuid) => {
+			if uuid != path.0 {
+				logger_wrap!(logger.info, req, format!("Download request for file with wrong UUID - Expected {} Got {}", path.0, uuid));
+				return HttpResponse::Forbidden().finish()
+			}
+		}
 		Err(_) => {
 			logger_wrap!(logger.info, req, "Request with no login cookie");
 			return HttpResponse::BadRequest().finish()
 		}
 	}
-	let f_path = std::path::Path::new("tmp").join(path.0);
+	let f_path = std::path::Path::new("tmp").join(format!("{}.{}.{}", path.0, path.1, path.2));
 	match NamedFile::open(f_path.clone()) {
 		Ok(nf) => nf.into_response(&req),
 		Err(e) => {
