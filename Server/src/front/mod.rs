@@ -1,6 +1,7 @@
 //! # Frontend data access
 //!
-//! This module provides paths and data structures to access the frontend with user validation
+//! This module provides the paths for frontend web access, as well as paths for frontend data
+//! validation and downloading date
 
 use actix_web::{
 	dev::{ServiceFactory, ServiceRequest},
@@ -9,11 +10,13 @@ use actix_web::{
 
 use crate::paths;
 
+mod cleaner;
 mod dash;
 mod login;
 mod prelude;
 mod register;
 mod statics;
+pub use cleaner::clean;
 
 paths!(
 	default statics::not_found_route(),
