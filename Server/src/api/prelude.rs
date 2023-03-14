@@ -5,13 +5,14 @@ use chrono::{DateTime, Local};
 use geo_types::Point;
 use serde::{Deserialize, Serialize};
 use tokio_pg_mapper_derive::PostgresMapper;
+use uuid::Uuid;
 
 /// Internal user serialised from the `users` table
 #[derive(Deserialize, PostgresMapper, Serialize)]
 #[pg_mapper(table = "users")]
 pub struct User {
 	pub uname: String,
-	pub uuid: i32,
+	pub uuid: Uuid,
 }
 
 /// Internal OTP serialised from the `keys` table
@@ -19,7 +20,7 @@ pub struct User {
 #[pg_mapper(table = "keys")]
 pub struct OTP {
 	pub key: String,
-	pub uuid: i32,
+	pub uuid: Uuid,
 	pub end_time: DateTime<Local>,
 }
 
@@ -27,7 +28,7 @@ pub struct OTP {
 #[derive(Deserialize, PostgresMapper, Serialize)]
 #[pg_mapper(table = "sessions")]
 pub struct Session {
-	pub uuid: i32,
+	pub uuid: Uuid,
 	pub time: DateTime<Local>,
 	pub hr: Vec<i32>,
 	pub meditation: Vec<i32>,
@@ -38,6 +39,8 @@ pub mod submitted {
 	//! Submitted data types
 	//!
 	//! These are the types submitted and not representations of db tables
+	use uuid::Uuid;
+
 	use super::*;
 
 	/// Required data to log in and generate a new OTP
@@ -58,7 +61,7 @@ pub mod submitted {
 
 	impl Session {
 		/// Turn a `Self` into a [`Session`][super::session]
-		pub fn into_row(self, uuid: i32) -> super::Session {
+		pub fn into_row(self, uuid: Uuid) -> super::Session {
 			super::Session {
 				uuid,
 				time: self.time,

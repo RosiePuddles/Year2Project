@@ -1,12 +1,5 @@
-use std::future::Future;
-
 use actix_files::NamedFile;
-use actix_web::{
-	get,
-	http::{header::ContentType, StatusCode},
-	web, Either, Error, HttpMessage, HttpRequest, HttpResponse, Responder, Route,
-};
-use futures_util::FutureExt;
+use actix_web::{get, http::StatusCode, web, Either, HttpMessage, HttpRequest, HttpResponse, Responder, Route};
 
 use crate::{logger::Logger, logger_wrap};
 

@@ -3,24 +3,20 @@
 //! This handles user logins and locally exposes [`db_new_user_key`] to allow a new user to return an user key on
 //! success
 
-
 use std::{
 	collections::hash_map::DefaultHasher,
 	hash::{Hash, Hasher},
 };
-use actix_files::NamedFile;
 
-use actix_web::{get, http::header::ContentType, post, web, Error, HttpMessage, HttpRequest, HttpResponse, Either};
-use actix_web::http::StatusCode;
+use actix_files::NamedFile;
+use actix_web::{get, http::StatusCode, post, web, Either, HttpMessage, HttpRequest, HttpResponse};
 use chrono::Local;
-use deadpool_postgres::{Client, Manager, Pool};
+use deadpool_postgres::{Client, Pool};
 use json::JsonValue;
 use rand::SeedableRng;
 use rand_chacha::rand_core::block::BlockRngCore;
-use tokio_postgres::Row;
 
-use crate::{db::ApiError, front::prelude::Admin, logger::Logger, logger_wrap};
-use crate::front::prelude::AdminSubmission;
+use crate::{front::prelude::AdminSubmission, logger::Logger, logger_wrap};
 
 /// Get a new user key from a given UUID and uname
 pub(in crate::front) async fn db_new_admin_key(
@@ -44,14 +40,21 @@ pub(in crate::front) async fn db_new_admin_key(
 		.iter()
 		.fold(String::new(), |acc, t| format!("{}{:08x}", acc, t));
 	let end = Local::now() + chrono::Days::new(7);
-	
-	let stmt = client.prepare(include_str!("../../sql/admin/new_key.sql")).await.unwrap();
+
+	let stmt = client
+		.prepare(include_str!("../../sql/admin/new_key.sql"))
+		.await
+		.unwrap();
 
 	if let Err(e) = client.query(&stmt, &[&user_key, &uuid, &end]).await {
-		logger_wrap!(logger.error, req, format!("{}:{} Admin key insertion error {:?}", file!(), line!(), e));
+		logger_wrap!(
+			logger.error,
+			req,
+			format!("{}:{} Admin key insertion error {:?}", file!(), line!(), e)
+		);
 		return Either::Right(StatusCode::INTERNAL_SERVER_ERROR)
 	};
-	
+
 	Either::Left(json::object! {
 		cookie: json::object! {
 			value: user_key,
@@ -67,7 +70,10 @@ pub async fn front_login(req: HttpRequest, db_pool: web::Data<Pool>, logger: web
 	if let Some(cookie) = req.cookie("login") {
 		match db_pool.get().await {
 			Ok(client) => {
-				let stmt = client.prepare(include_str!("../../sql/admin/auth_key.sql")).await.unwrap();
+				let stmt = client
+					.prepare(include_str!("../../sql/admin/auth_key.sql"))
+					.await
+					.unwrap();
 				match client.query(&stmt, &[&cookie.value()]).await {
 					Ok(rows) => {
 						if !rows.is_empty() {
@@ -78,13 +84,19 @@ pub async fn front_login(req: HttpRequest, db_pool: web::Data<Pool>, logger: web
 						logger_wrap!(logger.error, req, format!("Cookie check query error - {:?}", e))
 					}
 				}
-			},
+			}
 			Err(e) => {
-				logger_wrap!(logger.error, req, format!("Error connecting to db on login cookie check - {:?}", e))
+				logger_wrap!(
+					logger.error,
+					req,
+					format!("Error connecting to db on login cookie check - {:?}", e)
+				)
 			}
 		}
 	}
-	NamedFile::open("front/login.html").expect("Could not find login file (login.html)").into_response(&req)
+	NamedFile::open("front/login.html")
+		.expect("Could not find login file (login.html)")
+		.into_response(&req)
 }
 
 /// User login path
@@ -123,11 +135,9 @@ pub async fn front_login_post(
 		}
 	};
 	match db_new_admin_key(&client, &user.email, &user.password, uuid, &logger, &req).await {
-		Either::Left(cookie) => {
-			HttpResponse::Ok().insert_header(("content-type", "application/json")).body(cookie.to_string())
-		}
-		Either::Right(err) => {
-			HttpResponse::new(err)
-		}
+		Either::Left(cookie) => HttpResponse::Ok()
+			.insert_header(("content-type", "application/json"))
+			.body(cookie.to_string()),
+		Either::Right(err) => HttpResponse::new(err),
 	}
 }

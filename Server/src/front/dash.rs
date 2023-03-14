@@ -4,31 +4,36 @@
 //! success
 
 use std::{
-	collections::hash_map::DefaultHasher,
-	hash::{Hash, Hasher},
+	collections::{HashMap, HashSet},
+	io::Write,
 };
-use std::collections::{HashMap, HashSet};
-use std::io::Write;
+
 use actix_files::NamedFile;
-
-use actix_web::{get, http::header::ContentType, post, web, Error, HttpMessage, HttpRequest, HttpResponse};
-use chrono::{DateTime, Local};
-use deadpool_postgres::{Client, Manager, Pool};
+use actix_web::{get, post, web, HttpMessage, HttpRequest, HttpResponse};
+use chrono::Local;
+use deadpool_postgres::Pool;
 use rand::prelude::SliceRandom;
-use rand::Rng;
-use serde_json::json;
 use tokio_pg_mapper::FromTokioPostgresRow;
-use tokio_postgres::Row;
-use crate::api::Session;
-use crate::front::prelude::{DateRange, DownloadFormat};
-use crate::logger::Logger;
-use crate::logger_wrap;
 
-async fn cookie_check(req: &HttpRequest, db_pool: &web::Data<Pool>, logger: &web::Data<Logger<'_>>) -> Result<i32, HttpResponse> {
+use crate::{
+	api::Session,
+	front::prelude::{DateRange, DownloadFormat},
+	logger::Logger,
+	logger_wrap,
+};
+
+async fn cookie_check(
+	req: &HttpRequest,
+	db_pool: &web::Data<Pool>,
+	logger: &web::Data<Logger<'_>>,
+) -> Result<i32, HttpResponse> {
 	if let Some(cookie) = req.cookie("login") {
 		match db_pool.get().await {
 			Ok(client) => {
-				let stmt = client.prepare(include_str!("../../sql/admin/auth_key.sql")).await.unwrap();
+				let stmt = client
+					.prepare(include_str!("../../sql/admin/auth_key.sql"))
+					.await
+					.unwrap();
 				match client.query(&stmt, &[&cookie.value()]).await {
 					Ok(mut rows) => {
 						if let Some(uuid_row) = rows.pop() {
@@ -44,9 +49,13 @@ async fn cookie_check(req: &HttpRequest, db_pool: &web::Data<Pool>, logger: &web
 						logger_wrap!(logger.error, req, format!("Cookie check query error - {:?}", e))
 					}
 				}
-			},
+			}
 			Err(e) => {
-				logger_wrap!(logger.error, req, format!("Error connecting to db on dashboard cookie check - {:?}", e))
+				logger_wrap!(
+					logger.error,
+					req,
+					format!("Error connecting to db on dashboard cookie check - {:?}", e)
+				)
 			}
 		}
 	}
@@ -57,26 +66,40 @@ async fn cookie_check(req: &HttpRequest, db_pool: &web::Data<Pool>, logger: &web
 #[get("/dashboard")]
 pub async fn front_dash(req: HttpRequest, db_pool: web::Data<Pool>, logger: web::Data<Logger<'_>>) -> HttpResponse {
 	match cookie_check(&req, &db_pool, &logger).await {
-		Ok(_) => NamedFile::open("front/dash.html").expect("Could not find dashboard file (dash.html)").into_response(&req),
-		Err(redirect) => redirect
+		Ok(_) => NamedFile::open("front/dash.html")
+			.expect("Could not find dashboard file (dash.html)")
+			.into_response(&req),
+		Err(redirect) => redirect,
 	}
 }
 
 /// User login path
 #[post("/dashboard")]
-pub async fn front_dash_download(req: HttpRequest, dates: web::Json<DateRange>, db_pool: web::Data<Pool>, logger: web::Data<Logger<'_>>) -> HttpResponse {
+pub async fn front_dash_download(
+	req: HttpRequest,
+	dates: web::Json<DateRange>,
+	db_pool: web::Data<Pool>,
+	logger: web::Data<Logger<'_>>,
+) -> HttpResponse {
 	let uuid = match cookie_check(&req, &db_pool, &logger).await {
 		Ok(uuid) => uuid,
-		Err(redirect) => return redirect
+		Err(redirect) => return redirect,
 	};
 	let client = match db_pool.get().await {
 		Ok(client) => client,
 		Err(err) => {
-			logger_wrap!(logger.error, req, format!("Error connecting to db on login cookie check - {:?}", err));
+			logger_wrap!(
+				logger.error,
+				req,
+				format!("Error connecting to db on login cookie check - {:?}", err)
+			);
 			return HttpResponse::InternalServerError().finish()
 		}
 	};
-	let stmt = client.prepare(include_str!("../../sql/admin/download.sql")).await.unwrap();
+	let stmt = client
+		.prepare(include_str!("../../sql/admin/download.sql"))
+		.await
+		.unwrap();
 	let data = match client.query(&stmt, &[&dates.start, &dates.end]).await {
 		Ok(rows) => {
 			let mut sessions = Vec::new();
@@ -84,15 +107,21 @@ pub async fn front_dash_download(req: HttpRequest, dates: web::Json<DateRange>, 
 				sessions.push(Session::from_row(row).unwrap())
 			}
 			let unique_uuids = sessions.iter().map(|s| s.uuid).collect::<HashSet<_>>();
-			let mut rng = rand::thread_rng();
-			let mut uuid_map = (0..unique_uuids.len()).collect::<Vec<_>>();
-			uuid_map.shuffle(&mut rng);
-			let uuid_map = unique_uuids.iter().zip(uuid_map).map(|(original, map)| (*original, map as i32)).collect::<HashMap<_, _>>();
+			let mut new_uuids = unique_uuids.iter().collect::<Vec<_>>();
+			new_uuids.shuffle(&mut rand::thread_rng());
+			let uuid_map = unique_uuids
+				.iter()
+				.zip(new_uuids)
+				.map(|(original, map)| (original.clone(), map.clone()))
+				.collect::<HashMap<_, _>>();
 			let mut mapped_session = Vec::new();
 			match dates.format {
 				DownloadFormat::JSON => {
 					for mut session in sessions {
-						session.uuid = *uuid_map.get(&session.uuid).expect("UUID map didn't work correctly");
+						session.uuid = uuid_map
+							.get(&session.uuid)
+							.expect("UUID map didn't work correctly")
+							.clone();
 						mapped_session.push(serde_json::to_string(&session).unwrap())
 					}
 					format!("[{}]", mapped_session.join(","))
@@ -100,13 +129,27 @@ pub async fn front_dash_download(req: HttpRequest, dates: web::Json<DateRange>, 
 				DownloadFormat::CSV => {
 					mapped_session.push("uuid,time,hr,meditation,gaze".to_string());
 					for mut session in sessions {
-						session.uuid = *uuid_map.get(&session.uuid).expect("UUID map didn't work correctly");
+						session.uuid = uuid_map
+							.get(&session.uuid)
+							.expect("UUID map didn't work correctly")
+							.clone();
 						mapped_session.push(format!(
 							"{},{},[{}],[{}],[{}]",
-							session.uuid, session.time.to_rfc3339(),
+							session.uuid,
+							session.time.to_rfc3339(),
 							session.hr.iter().map(|t| t.to_string()).collect::<Vec<_>>().join(","),
-							session.meditation.iter().map(|t| t.to_string()).collect::<Vec<_>>().join(","),
-							session.gaze.iter().map(|t| format!("[{},{}]", t.x(), t.y())).collect::<Vec<_>>().join(",")
+							session
+								.meditation
+								.iter()
+								.map(|t| t.to_string())
+								.collect::<Vec<_>>()
+								.join(","),
+							session
+								.gaze
+								.iter()
+								.map(|t| format!("[{},{}]", t.x(), t.y()))
+								.collect::<Vec<_>>()
+								.join(",")
 						))
 					}
 					mapped_session.join("\n")
@@ -120,16 +163,17 @@ pub async fn front_dash_download(req: HttpRequest, dates: web::Json<DateRange>, 
 	};
 	let file_extension = match dates.format {
 		DownloadFormat::JSON => "json",
-		DownloadFormat::CSV => "csv"
+		DownloadFormat::CSV => "csv",
 	};
 	let f_name = format!("{}-{}.{}", uuid, Local::now().to_rfc3339(), file_extension);
 	if !std::path::Path::new("tmp").exists() {
 		std::fs::create_dir("tmp").expect("Unable to create tmp dir");
 	}
-	let mut file =  match std::fs::OpenOptions::new()
+	let mut file = match std::fs::OpenOptions::new()
 		.write(true)
 		.create_new(true)
-		.open(std::env::current_dir().unwrap().join("tmp").join(f_name.clone())) {
+		.open(std::env::current_dir().unwrap().join("tmp").join(f_name.clone()))
+	{
 		Ok(f) => f,
 		Err(e) => {
 			logger_wrap!(logger.error, req, format!("File creation error - {:?}", e));
@@ -140,14 +184,22 @@ pub async fn front_dash_download(req: HttpRequest, dates: web::Json<DateRange>, 
 		logger_wrap!(logger.error, req, format!("File write error - {:?}", e));
 		return HttpResponse::InternalServerError().finish()
 	}
-	HttpResponse::Ok().content_type("application/json").body(json::object! {
-		redirect: format!("download/{}", &f_name),
-		name: f_name
-	}.to_string())
+	HttpResponse::Ok().content_type("application/json").body(
+		json::object! {
+			redirect: format!("download/{}", &f_name),
+			name: f_name
+		}
+		.to_string(),
+	)
 }
 
 #[get("/download/{path}")]
-pub async fn download_file(req: HttpRequest, path: web::Path<(String,)>, db_pool: web::Data<Pool>, logger: web::Data<Logger<'_>>) -> HttpResponse {
+pub async fn download_file(
+	req: HttpRequest,
+	path: web::Path<(String,)>,
+	db_pool: web::Data<Pool>,
+	logger: web::Data<Logger<'_>>,
+) -> HttpResponse {
 	let path = path.into_inner();
 	match cookie_check(&req, &db_pool, &logger).await {
 		Ok(_) => {}

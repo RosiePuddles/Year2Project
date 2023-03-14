@@ -1,6 +1,7 @@
 use chrono::{DateTime, Local};
 use serde::{Deserialize, Serialize};
 use tokio_pg_mapper_derive::PostgresMapper;
+use uuid::Uuid;
 
 /// Internal user serialised from the `admins` table. This represents someone with a server based
 /// account allowing for downloading data
@@ -8,7 +9,7 @@ use tokio_pg_mapper_derive::PostgresMapper;
 #[pg_mapper(table = "admins")]
 pub struct Admin {
 	pub email: String,
-	pub uuid: i32,
+	pub uuid: Uuid,
 	pub pwdh: String,
 }
 
@@ -22,7 +23,7 @@ pub struct AdminSubmission {
 pub struct DateRange {
 	pub start: DateTime<Local>,
 	pub end: DateTime<Local>,
-	pub format: DownloadFormat
+	pub format: DownloadFormat,
 }
 
 #[derive(Deserialize, Serialize)]
@@ -36,6 +37,6 @@ pub enum DownloadFormat {
 #[pg_mapper(table = "admin_auth")]
 pub struct AdminAuth {
 	pub auth_key: String,
-	pub uuid: i32,
+	pub uuid: Uuid,
 	pub end_time: DateTime<Local>,
 }

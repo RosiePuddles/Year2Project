@@ -2,29 +2,19 @@
 //!
 //! This handles frontend user registration and registration credential verification
 
-use std::{
-	collections::hash_map::DefaultHasher,
-	hash::{Hash, Hasher},
-};
-
 use actix_files::NamedFile;
-use actix_web::{get, http::header::ContentType, post, web, web::Json, Error, HttpMessage, HttpRequest, HttpResponse, Responder, Either};
-use actix_web::http::{header, StatusCode};
-use chrono::Local;
-use deadpool_postgres::{Client, Manager, Pool};
+use actix_web::{
+	get, http::StatusCode, post, web, web::Json, Either, HttpMessage, HttpRequest, HttpResponse, Responder,
+};
+use deadpool_postgres::{Client, Pool};
 use json::JsonValue;
-use rand::SeedableRng;
-use rand_chacha::rand_core::block::BlockRngCore;
 use regex::Regex;
-use tokio_postgres::Row;
 
 use crate::{
-	db::ApiError,
-	front::prelude::{Admin, AdminSubmission},
+	front::{login::db_new_admin_key, prelude::AdminSubmission},
 	logger::Logger,
 	logger_wrap,
 };
-use crate::front::login::db_new_admin_key;
 
 // async fn db_login(client: &Client, uname: String, logger: &web::Data<Logger<'_>>) -> Result<JsonValue, ApiError> {
 // 	macro_rules! get_wrapper {
@@ -67,21 +57,17 @@ use crate::front::login::db_new_admin_key;
 //
 /// Performs checks to ensure no conflicts and
 async fn db_new_admin(
-	client: &Client, email: &String, password: &String, logger: &web::Data<Logger<'_>>, req: &HttpRequest
+	client: &Client,
+	email: &String,
+	password: &String,
+	logger: &web::Data<Logger<'_>>,
+	req: &HttpRequest,
 ) -> Either<JsonValue, StatusCode> {
-	macro_rules! get_wrapper {
-		($t: expr) => {
-			match $t {
-				Ok(t) => t,
-				Err(e) => {
-					logger_wrap!(logger.error, req, format!("{}:{} Admin creation {:?}", file!(), line!(), e.to_string()));
-					return Either::Right(StatusCode::INTERNAL_SERVER_ERROR)
-				}
-			}
-		};
-	}
 	// check no-conflict for email
-	let stmt = client.prepare(include_str!("../../sql/admin/no_conflict.sql")).await.unwrap();
+	let stmt = client
+		.prepare(include_str!("../../sql/admin/no_conflict.sql"))
+		.await
+		.unwrap();
 	match client.query(&stmt, &[email]).await {
 		Ok(rows) => {
 			if !rows.is_empty() {
@@ -94,28 +80,43 @@ async fn db_new_admin(
 		}
 	}
 	// insert new user
-	let stmt = client.prepare(include_str!("../../sql/admin/new_admin.sql")).await.unwrap();
+	let stmt = client
+		.prepare(include_str!("../../sql/admin/new_admin.sql"))
+		.await
+		.unwrap();
 	let uuid = match client.query(&stmt, &[email, password]).await {
 		Ok(mut rows) => {
 			if let Some(row) = rows.pop() {
 				match row.try_get::<_, i32>(0) {
 					Ok(uuid) => uuid,
 					Err(e) => {
-						logger_wrap!(logger.error, req, format!("{}:{} New admin creation error {:?}", file!(), line!(), e));
+						logger_wrap!(
+							logger.error,
+							req,
+							format!("{}:{} New admin creation error {:?}", file!(), line!(), e)
+						);
 						return Either::Right(StatusCode::INTERNAL_SERVER_ERROR)
 					}
 				}
 			} else {
-				logger_wrap!(logger.error, req, format!("{}:{} New admin creation error. No uuid returned", file!(), line!()));
+				logger_wrap!(
+					logger.error,
+					req,
+					format!("{}:{} New admin creation error. No uuid returned", file!(), line!())
+				);
 				return Either::Right(StatusCode::INTERNAL_SERVER_ERROR)
 			}
 		}
 		Err(err) => {
-			logger_wrap!(logger.error, req, format!("{}:{} New admin creation error {:?}", file!(), line!(), err));
+			logger_wrap!(
+				logger.error,
+				req,
+				format!("{}:{} New admin creation error {:?}", file!(), line!(), err)
+			);
 			return Either::Right(StatusCode::INTERNAL_SERVER_ERROR)
 		}
 	};
-	
+
 	db_new_admin_key(client, email, password, uuid, logger, req).await
 }
 
@@ -150,11 +151,9 @@ pub async fn front_register_post(
 		}
 	};
 	match db_new_admin(&client, &user.email, &user.password, &logger, &req).await {
-		Either::Left(cookie) => {
-			HttpResponse::Ok().insert_header(("content-type", "application/json")).body(cookie.to_string())
-		}
-		Either::Right(err) => {
-			HttpResponse::new(err)
-		}
+		Either::Left(cookie) => HttpResponse::Ok()
+			.insert_header(("content-type", "application/json"))
+			.body(cookie.to_string()),
+		Either::Right(err) => HttpResponse::new(err),
 	}
 }

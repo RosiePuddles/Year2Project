@@ -9,12 +9,12 @@ use std::{
 use actix_web::{
 	body::EitherBody,
 	cookie::Cookie,
-	dev::{Payload, Service, ServiceRequest, ServiceResponse, Transform},
+	dev::{Service, ServiceRequest, ServiceResponse, Transform},
 	http::{header::HeaderMap, Method, StatusCode},
 	web, Error, HttpMessage,
 };
 use chrono::Local;
-use futures_util::{future::LocalBoxFuture, Stream, StreamExt, TryFutureExt, TryStreamExt};
+use futures_util::future::LocalBoxFuture;
 
 pub struct LoggerMiddleware;
 
@@ -53,7 +53,7 @@ where
 		self.0.poll_ready(cx).map_err(core::convert::Into::into)
 	}
 
-	fn call(&self, mut req: ServiceRequest) -> Self::Future {
+	fn call(&self, req: ServiceRequest) -> Self::Future {
 		let req_inner = req.request();
 		let logger = req_inner.app_data::<web::Data<Logger>>().unwrap();
 		let host = req_inner.connection_info().clone();

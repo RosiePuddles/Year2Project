@@ -1,5 +1,4 @@
 mod api;
-mod cleaner;
 mod db;
 mod front;
 mod logger;
@@ -36,7 +35,7 @@ macro_rules! paths {
 		}
 	};
     (default $d:expr, $($j:expr),*$(,)?) => {
-		pub fn paths<T>(mut app: App<T>) -> App<T>
+		pub fn paths<T>(app: App<T>) -> App<T>
 		where
 			T: ServiceFactory<ServiceRequest, Config = (), Error = Error, InitError = ()>,
 		{
@@ -60,11 +59,6 @@ async fn main() -> std::io::Result<()> {
 		.append(true)
 		.open("server.log")?;
 	let logger = logger::Logger::default(log_file, cfg!(debug_assertions));
-	let pool_clone = pool.clone();
-	let logger_clone = logger.clone();
-
-	// todo: make this work
-	std::thread::spawn(move || cleaner::main(pool_clone, logger_clone));
 
 	let server = HttpServer::new(move || {
 		let mut app = App::new()

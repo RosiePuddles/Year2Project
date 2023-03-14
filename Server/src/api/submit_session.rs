@@ -1,6 +1,7 @@
 use actix_web::{post, web, Error, HttpMessage, HttpRequest, HttpResponse};
 use chrono::{DateTime, Local};
 use deadpool_postgres::{Client, GenericClient, Pool};
+use uuid::Uuid;
 
 use crate::{api::prelude::submitted::Session, db::ApiError, logger::Logger, logger_wrap};
 
@@ -36,7 +37,7 @@ pub async fn db_add_user(
 			if let Some(row) = rows.pop() {
 				// don't need to check for multiple rows because uname is unique
 				(
-					get_wrapper!(row.try_get::<_, i32>(0)),
+					get_wrapper!(row.try_get::<_, Uuid>(0)),
 					get_wrapper!(row.try_get::<_, DateTime<Local>>(1)),
 				)
 			} else {

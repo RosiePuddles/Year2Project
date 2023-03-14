@@ -4,7 +4,7 @@
 
 use actix_web::{
 	dev::{ServiceFactory, ServiceRequest},
-	App, Error
+	App, Error,
 };
 
 use crate::paths;
