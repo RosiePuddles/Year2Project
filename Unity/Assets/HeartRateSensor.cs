@@ -6,14 +6,20 @@ using System.Threading.Tasks;
 using System.Threading;
 using System.Collections.Generic;
 
-// Credit to
-// https://gist.github.com/danielbierwirth/0636650b005834204cb19ef5ae6ccedb
+
+
 class HeartRateSensor : MonoBehaviour
 {
+
+    // credit to https://gist.github.com/danielbierwirth/0636650b005834204cb19ef5ae6ccedb
+    // for code to create TCP client connection
+
+
     private TcpClient socketConnection;
     private Task listenTask;
     private CancellationTokenSource cancellationTokenSource;
 
+    // contains list of tuples of the time and heart rate
     public static List<(string, int)> hrReadings { get; private set; }
 
     private static int HeartRate;
@@ -26,11 +32,13 @@ class HeartRateSensor : MonoBehaviour
 
     private void ConnectToTcpServer()
     {
-        hrReadings = new List<(string, int)>();
         try
         {
+            hrReadings = new List<(string, int)>();
             cancellationTokenSource = new CancellationTokenSource();
             var CancellationToken = cancellationTokenSource.Token;
+
+            // Run a task to listen out for data
             listenTask = Task.Run(() => ListenForData(CancellationToken));
         }
         catch (Exception e)
@@ -41,8 +49,13 @@ class HeartRateSensor : MonoBehaviour
 
     private void OnDestroy()
     {
+        // This script is destroyed when returning from the meditation back to the main menu
+        // so we need to cancel the task and close the socket connection
         cancellationTokenSource.Cancel();
-        socketConnection.Close();
+        if (socketConnection != null)
+        {
+            socketConnection.Close();
+        }
     }
 
     private void ListenForData(CancellationToken cancellationToken)
@@ -78,10 +91,11 @@ class HeartRateSensor : MonoBehaviour
                             {
                                 hrReadings.Add((DateTime.Now.ToString(), HeartRate));
                             }
-                            else
+                            else 
                             {
                                 try
                                 {
+                                    // message is appended with B, if it is the intial base line heart rate
                                     if (serverMessage[0] == 'B') {
                                         CubeController.ChangeBaseHR(int.Parse(serverMessage.Substring(1)));
                                         Debug.Log("Base line " + int.Parse(serverMessage.Substring(1)));

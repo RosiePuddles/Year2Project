@@ -4,7 +4,6 @@ using UnityEngine;
 
 public class CubeSpawner : MonoBehaviour
 {
-    // Reference to the Prefab. Drag a Prefab into this field in the Inspector.
     public GameObject cube;
 
     [SerializeField]
@@ -16,12 +15,16 @@ public class CubeSpawner : MonoBehaviour
     float y;
     float z;
 
-    // This script will simply instantiate the Prefab when the game starts.
+    // Instantiates the Prefab cubes when the game starts.
     void Awake()
     {
-        // Instantiate at position (0, 0, 0) and zero rotation.
+        // Instantiates at position (0, 0, 0) and zero rotation.
         float currentAngle = 0;
+
+        // the difference in radians, between each cubes position
         float angleIncrement = (2*Mathf.PI)/cubeCount;
+
+        // instantiate the cubes so they are evenly spaced around a unit circle
         for (int i = 0; i < cubeCount; i++)
         {
             x = Mathf.Sin(currentAngle);

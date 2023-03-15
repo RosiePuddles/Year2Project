@@ -8,10 +8,15 @@ using System.Collections.Generic;
 
 public class Myndplay : MonoBehaviour
 {
+    // credit to https://gist.github.com/danielbierwirth/0636650b005834204cb19ef5ae6ccedb
+    // for code to create TCP client connection
+
     private TcpClient socketConnection;
     private Task listenTask;
     private CancellationTokenSource cancellationTokenSource;
 
+
+    // contains list of tuples of the time and meditation value
     public static List<(string, int)> EEGreadings { get; private set; }
 
     private static int meditationValue;
@@ -29,6 +34,8 @@ public class Myndplay : MonoBehaviour
             EEGreadings = new List<(string, int)>();
             cancellationTokenSource = new CancellationTokenSource();
             var CancellationToken = cancellationTokenSource.Token;
+
+            // Run a task to listen out for data
             listenTask = Task.Run(() => ListenForData(CancellationToken));
         
         }
@@ -37,9 +44,10 @@ public class Myndplay : MonoBehaviour
             Debug.Log("On client connect exception " + e);
         }
     }
-
     private void OnDestroy()
     {
+        // This script is destroyed when returning from the meditation back to the main menu
+        // so we need to cancel the task and close the socket connection
         cancellationTokenSource.Cancel();
         if (socketConnection != null)
         {
@@ -47,7 +55,6 @@ public class Myndplay : MonoBehaviour
         }
 
     }
-
     private void ListenForData(CancellationToken cancellationToken)
     {
         while (true) // constantly try and connect to port 8080
@@ -69,9 +76,6 @@ public class Myndplay : MonoBehaviour
                             Array.Copy(bytes, 0, incommingData, 0, length);
                             // Convert byte array to string message. 						
                             string serverMessage = Encoding.ASCII.GetString(incommingData);
-
-
-
 
                             if (cancellationToken.IsCancellationRequested)
                             {
