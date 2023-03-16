@@ -1,0 +1,1 @@
+INSERT INTO admins VALUES ($1, $2) RETURNING uuid;

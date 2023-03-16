@@ -1,0 +1,1 @@
+SELECT * FROM sessions WHERE time_start > $1 AND time_start < $2;

@@ -1,0 +1,1 @@
+INSERT INTO admin_auth VALUES ($1, $2, $3);

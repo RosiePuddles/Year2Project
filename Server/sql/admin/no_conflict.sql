@@ -1,0 +1,1 @@
+SELECT email FROM admins WHERE email = $1;
