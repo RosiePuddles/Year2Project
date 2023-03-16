@@ -16,10 +16,12 @@ use actix_web::{
 	cookie::Cookie,
 	dev::{Service, ServiceRequest, ServiceResponse, Transform},
 	http::{header::HeaderMap, Method, StatusCode},
-	web, Error, HttpMessage,
+	web, Error, HttpMessage, HttpResponse,
 };
 use chrono::Local;
 use futures_util::future::LocalBoxFuture;
+
+use crate::logger_wrap;
 
 pub struct LoggerMiddleware;
 
@@ -74,7 +76,7 @@ where
 			&& req_inner.cookie("API_KEY").map(|c| c.to_string())
 				!= Some(env!("API_KEY", "No API key given!").to_string())
 		{
-			if let Err(e) = logger.response(host, &method, path, 403) {
+			if let Err(e) = logger.response(host, &method, path, StatusCode::FORBIDDEN, res.headers()) {
 				println!("Unable to write to log file! {}", e)
 			}
 			let request = req.request().clone();
@@ -136,12 +138,7 @@ macro_rules! printer {
 	($n:ident) => {
 		#[doc = concat!(stringify!($n), " log level")]
 		pub fn $n<T: Display>(
-			&self,
-			host: &str,
-			method: &Method,
-			path: &str,
-			content_type: &str,
-			message: T,
+			&self, host: &str, method: &Method, path: &str, content_type: &str, message: T,
 		) -> std::io::Result<()> {
 			let printed = format!(
 				"[{} {:<5}] {} {} {} {} {}\n",
@@ -163,7 +160,9 @@ macro_rules! printer {
 
 impl<'a> Logger<'a> {
 	printer!(info);
+
 	printer!(error);
+
 	printer!(warn);
 
 	pub fn default(f: File, print: bool) -> Self {
@@ -189,12 +188,7 @@ impl<'a> Logger<'a> {
 
 	/// Request log. This is used when a request is made and will write general request info.
 	pub fn request<CPE: Display>(
-		&self,
-		host: &str,
-		method: &Method,
-		path: &str,
-		content_type: &str,
-		cookies: Result<Ref<Vec<Cookie<'_>>>, CPE>,
+		&self, host: &str, method: &Method, path: &str, content_type: &str, cookies: Result<Ref<Vec<Cookie<'_>>>, CPE>,
 	) -> std::io::Result<()> {
 		let printed = format!(
 			"[{} REQ  ] {} {} {} {} [{}]\n",
@@ -217,12 +211,7 @@ impl<'a> Logger<'a> {
 	/// Response log. This is used when a request is responded to and includes useful response
 	/// information
 	pub fn response(
-		&self,
-		host: &str,
-		method: &Method,
-		path: &str,
-		code: StatusCode,
-		headers: &HeaderMap,
+		&self, host: &str, method: &Method, path: &str, code: StatusCode, headers: &HeaderMap,
 	) -> std::io::Result<()> {
 		let printed = format!(
 			"[{} RES  ] {} {} {} {} [{}]\n",
@@ -251,7 +240,7 @@ impl<'a> Logger<'a> {
 		}
 		self.write(printed)
 	}
-	
+
 	/// Cleaner log call. This is made by the [`clean`](crate::front::clean) function when it needs
 	/// to log something and is typically an error. A call to this is normally wrapped under a
 	/// [`logger_wrap!`](crate::logger_wrap!) call
